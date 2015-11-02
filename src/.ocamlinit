@@ -1,0 +1,4 @@
+#use "obuffer.ml";;
+open StringBuffer;;
+
+let b = StringBuffer.make ();;
