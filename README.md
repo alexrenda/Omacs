@@ -1,4 +1,4 @@
-# ZMA Omacs
+# Omacs
 Emacs in OCaml
 
 ##Authors
@@ -7,20 +7,16 @@ Emacs in OCaml
 - Zander Bolgar - [_asb322_](mailto:asb322@cornell.edu)
 
 ##Meeting Plan
-Same
+We plan on meeting at least twice a week, and likely more often. Since we're on the same project team which already has biweekly meetings, we plan on meeting before or after those to discuss the project. When we get to the implementation phase, we plan on adding more meeting times as necessary.
 
 ##Design Proposal
 
-ZMA Omacs - Emacs in OCaml.
+Omacs - Emacs in OCaml.
 
-We want to make an ocaml-based extensible, customizable text editor - and more. At its core will be an interpreter for OCaml, a dialect of the [ML programming language](https://en.wikipedia.org/wiki/ML_(programming_language) with extensions to support text editing. The features of Omacs include:
+We want to make an ocaml-based extensible, customizable text editor - and more. At its core will be a simple buffer-based text editor, with the possibility of having arbitrary function be run on the contents of the buffer, taking into account the state of the text editor and file that it represents. The features of Omacs include:
 
-* Content-sensitive editing modes, including syntax coloring, for a variety of file types including plain text, source code, and HTML.
+* Content-sensitive editing modes, including support for a variety of file types including plain text and OCaml source code.
 
-* Complete built-in documentation, including a tutorial for new users.
+* Highly customizable, using OCaml code to replace or supplement built-in Omacs functionality.
 
-* Full [Unicode](http://unicode.org) support for nearly all human languages and their scripts.
-
-* Highly customizable, using OCaml code or a graphical interface.
-
-* A large number of extensions that add other functionality, including a project planner, mail and news reader, debugger interface, calendar, and more. Many of these extensions are distributed with ZMA Omacs; others are available separately.
+* Some number of other extensions to show the extent of what can be implemented with Omacs. This will possibly include a rudimentary mail client or webbrowser.
