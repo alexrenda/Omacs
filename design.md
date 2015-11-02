@@ -1,18 +1,14 @@
-Members: Alex Renda (adr74), Mustafa Ansari? (maa296), Zander Bolgar (lezed1).
+##Design Proposal
 
-Plan for a regular status meeting: Same
+ZMA Omacs - Emacs in OCaml.
 
-Design Proposal:
-
-ZMA Omacs -- Emacs in OCaml.
-
-We want to make an ocaml-based extensible, customizable text editor - and more. At its core will be an interpreter for OCaml, a dialect of the ML programming language with extensions to support text editing. The features of Omacs include:
+We want to make an ocaml-based extensible, customizable text editor - and more. At its core will be an interpreter for OCaml, a dialect of the [ML programming language](https://en.wikipedia.org/wiki/ML_(programming_language) with extensions to support text editing. The features of Omacs include:
 
 * Content-sensitive editing modes, including syntax coloring, for a variety of file types including plain text, source code, and HTML.
 
 * Complete built-in documentation, including a tutorial for new users.
 
-* Full Unicode support for nearly all human languages and their scripts.
+* Full [Unicode](http://unicode.org) support for nearly all human languages and their scripts.
 
 * Highly customizable, using OCaml code or a graphical interface.
 
