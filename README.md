@@ -13,11 +13,11 @@ We plan on meeting at least twice a week, and likely more often. Since we're on 
 
 Omacs - Emacs in OCaml.
 
-We want to make an ocaml-based extensible, customizable text editor - and more. At its core will be a simple buffer-based text editor, with the possibility of having arbitrary function be run on the contents of the buffer, taking into account the state of the text editor and file that it represents. Naturally, we intend for the editor to have the capabilities to be just as customizable as its namesake, while also being just as elegant to use. The features of Omacs include:
+We want to make an OCaml-based extensible, customizable text editor - and more. At its core will be a simple buffer-based text editor, with the possibility of having arbitrary function be run on the contents of the buffer, taking into account the state of the text editor and file that it represents. Naturally, we intend for the editor to have the capabilities to be just as customizable as its namesake, while also being just as elegant to use. The features of Omacs include:
 
 * An extensive (and intuitive) collection of built-in keyboard shortcuts that would allow the user to quickly perform common operations, e.g. cut/paste, find/replace, navigation, etc.
     
-    * Omacs would also feature a tutorial, similar to vimtutor, in order to teach users various commands, while also providing an exhaustive documentation of the built-in keybindings. The tutorial will be user editable so it can evolve alongside the program, should the user choose to implement any added functionality to Omacs.  
+    * Omacs would also feature a tutorial, similar to GNU Emacs' tutorial or vimtutor, in order to teach users various commands, while also providing an exhaustive documentation of the built-in keybindings. The tutorial will be user editable so it can evolve alongside the program, should the user choose to implement any added functionality to Omacs.  
 
 * Content-sensitive editing modes, including support for a variety of file types including plain text and OCaml source code.
 
