@@ -49,4 +49,15 @@ module StringBuffer : OBuffer = struct
     let new_text = left ^ right in
     {text=new_text; cursor=buf.cursor - 1}
     
+  (* Composed features! *)
+    
+  let insert_string (buf:buf) (str:string) : buf =
+    let b : buf ref = ref buf in
+    String.iter (fun c -> b := insert_char !b c) str;
+    !b
+      
+  let rec delete_many_chars (buf:buf) (n:int) : buf =
+    if n > 0 then delete_many_chars (delete_char buf) (n - 1)
+    else buf
+      
 end
