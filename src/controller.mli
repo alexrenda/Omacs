@@ -7,11 +7,11 @@ module type Controller = sig
 
     val create : unit -> t
 
-    val register_keypress_event : key -> callback -> unit
-    val register_hook : hook -> callback -> unit
+    val register_keypress_event : key -> callback -> t
+    val register_hook : hook -> callback -> t
 
-    val keypress : key -> OBuffer.t -> unit
-    val run_hook : hook -> OBuffer.t -> unit
+    val keypress : key -> OBuffer.t -> t
+    val run_hook : hook -> OBuffer.t -> t
 
-    val eval_file : File.t -> unit
+    val eval_file : File.t -> t
 end
