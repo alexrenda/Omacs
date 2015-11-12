@@ -1,15 +1,16 @@
-SOURCE_FILE=README.md
-OUTPUT_FILE=charter.pdf
-
-COMPILER=pandoc
-
 default: run
 
-COMPILE: $(SOURCE_FILE)
-	$(COMPILER) $(SOURCE_FILE) -o $(OUTPUT_FILE)
+%.pdf: %.md
+	pandoc $< -o $@
 
-run: COMPILE
-	open $(OUTPUT_FILE)
+docs: $(patsubst %,%.pdf, readme design)
+
+%.png: %.dot
+	dot $< -Tpng -o $@
+
+graphs: $(patsubst %,%.png, mdd)
+
+run: graphs docs
 
 clean:
 	rm charter.pdf
