@@ -1,0 +1,6 @@
+digraph candc {
+    Terminal -> Controller [label="User Input"];
+    Controller -> Interpreter [label="Running commands"];
+    File -> Buffer [label="File IO"];
+    Buffer -> Terminal [label="Buffer Text"];
+}
