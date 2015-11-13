@@ -13,4 +13,4 @@ graphs: $(patsubst %,%.png, mdd candc)
 run: graphs docs
 
 clean:
-	rm charter.pdf
+	rm *.pdf *.p
