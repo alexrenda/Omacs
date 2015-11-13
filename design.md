@@ -23,9 +23,6 @@ Omacs include:
    alongside the program, should the user choose to implement any
    added functionality to Omacs.
 
-* Content-sensitive editing modes, including support for a variety of
-  file types including plain text and OCaml source code.
-
 * Highly customizable, using OCaml code to replace or supplement
   built-in Omacs functionality. This will be interpreted
   at run time, using Ocaml's built in interpreter (i.e. whatever the
