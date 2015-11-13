@@ -17,11 +17,15 @@ type callback = (t*OBuffer.t) -> result
 
 val create : unit -> t
 
+(* register an api function to be available to interpreted code *)
 val register_api_function : ('a, 'b) api_function -> t
 
+(* register keypress and hook events - these will primarily be called *)
+(* by interpreted code *)
 val register_keypress_event : key -> callback -> t
 val register_hook : hook -> callback -> t
 
+(* tell the controller about a keypress or hook that should be ran. *)
 val keypress : key -> OBuffer.t -> result
 val run_hook : hook -> OBuffer.t -> result
 
