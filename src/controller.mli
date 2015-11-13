@@ -10,7 +10,8 @@ type hook
 type ('a, 'b) api_function = string*('a -> 'b)
 
 (* A callback is a method that was parsed that is later ran as a 
- * result of a keypress or hook. *)
+ * result of a keypress or hook. It takes in the state, and returns a *)
+(* new, updated state (possibly calling api functions along the way) *)
 type result = t*OBuffer.t
 type callback = (t*OBuffer.t) -> result
 
