@@ -1,5 +1,5 @@
 digraph mdd {
-    Terminal -> Controller -> Buffer -> FileSystem;
+    Terminal -> Controller -> Buffer -> File;
     Terminal -> Buffer;
     Controller -> Interpreter;
 }

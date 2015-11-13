@@ -1,10 +1,7 @@
-module type Terminal = sig
-    type t
+type t
 
-    val terminal_of_file : File.t -> t
+val create : unit -> t
+val show : t -> unit
+val open_file : File.t -> unit
 
-    val show : t -> unit
-    val open_file : File.file -> unit
-
-    val close : t -> unit
-end
+val close : t -> unit

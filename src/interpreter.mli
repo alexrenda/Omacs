@@ -1,3 +1,2 @@
-module type Interpreter = sig
-    val eval_file : File.t -> Controller.callback list
-end
+val eval_file :
+  File.t -> ('a, 'b) Controller.api_function list -> unit
