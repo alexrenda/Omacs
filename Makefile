@@ -1,6 +1,6 @@
 default: run
 
-%.pdf: %.md
+%.pdf: %.md *.dot
 	pandoc $< -o $@
 
 docs: $(patsubst %,%.pdf, readme design)

@@ -1,6 +1,8 @@
 digraph candc {
-    Terminal -> Controller [label="User Input"];
-    Controller -> Interpreter [label="Running commands"];
-    File -> Buffer [label="File IO"];
-    Buffer -> Terminal [label="Buffer Text"];
+    Terminal -> Controller [label="User Input (function call)"];
+    Controller -> Interpreter [label="Running commands (function call)"];
+    File -> Buffer [label="File IO (function call, actual system level file IO)"];
+    Buffer -> Terminal [label="Buffer Text (function call)"];
+    Interpreter -> Controller [label="Registered callbacks (function call)"];
+    Controller -> Buffer [label="Result of callbacks on keypresses / hooks (function call)"];
 }
