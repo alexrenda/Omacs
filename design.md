@@ -37,7 +37,7 @@ Omacs include:
   mail client or web browser.
 
 Omacs is intended to be an all inclusive text editor. As with other
-editors, the critical underlying data structure is the the text
+editors, the critical underlying data structure is the text
 buffer, which stores the text being edited in the Omacs environment,
 and is written to the disk at the users command. We intend to
 implement the buffer by making use of OCaml's exciting mutability
@@ -56,7 +56,7 @@ The main modules that we plan on implementing are as follows:
 
 * **Terminal**: Curses-based top-level that serves as the front-end for the user. This will have the actual display, handle keypresses, and be the main entry point for the program. This module is the only layer that the user can interact with, and ultimately passes all information to the controller to edit the working buffer. The Terminal module also communicates with the OBuffer, however, it does not edit it directly; the Terminal only talks to the OBuffer to recieve information to display in the window.
 
-* **Controller**: The Controller the the module that is responsible for making modifications to the OBuffer on behalf of the user. In order to do this, the controller handles keypresses from the Terminal. By using a map of key events (e.g. C-space) to functions (e.g set mark), the terminal will be able to process user input to update the file.
+* **Controller**: The Controller the module that is responsible for making modifications to the OBuffer on behalf of the user. In order to do this, the controller handles keypresses from the Terminal. By using a map of key events (e.g. C-space) to functions (e.g set mark), the terminal will be able to process user input to update the file.
 
 * **OBuffer**: Actual data storage. The OBuffer will provide some methods for getting and setting the contents of the text buffer, which is the backing data structure for the text editor. It will also include any additional global data about the file being edited.
 
