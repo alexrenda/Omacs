@@ -10,6 +10,3 @@ val get_path : t -> string
 
 (* write the string to the file and flush *)
 val write_string : t -> string -> unit
-
-(* flush and close the file *)
-val close: t -> unit

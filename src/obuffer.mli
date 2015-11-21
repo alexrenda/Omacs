@@ -15,7 +15,7 @@ val move_cursor_left : t -> t
 
 (* Basic text interaction *)
 val set_text : t -> string -> t
-val insert_char_at_curor : t -> char -> t
+val insert_char_at_cursor : t -> char -> t
 val delete_char_at_cursor : t -> t
 
 (* Basic file operations *)

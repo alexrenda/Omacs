@@ -2,3 +2,5 @@ S .
 
 B _build/
 B _3110/
+
+PKG compiler-libs
