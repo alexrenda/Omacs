@@ -1,8 +1,8 @@
 type t
 (* types to represent a keypress and a hook. Likely these will just be
  * strings *)
-type key
-type hook
+type key = string
+type hook = string
 
 (* A callback is a method that was parsed that is later ran as a
  * result of a keypress or hook. It takes in the state, and returns a *)
