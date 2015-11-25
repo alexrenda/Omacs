@@ -6,7 +6,7 @@ let file_of_string (file:string) : t =
 let get_contents (file:t) : string =
   let rec get_all_lines acc stream =
     try
-      let acc' = (input_line stream) ^ "\n" in
+      let acc' = acc ^ (input_line stream) ^ "\n" in
       get_all_lines acc' stream
     with _ -> acc
   in
