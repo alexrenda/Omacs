@@ -13,6 +13,6 @@ let _ =
 #directory "_build";;
 #directory ".";;
 #load "file.d.cmo";;
-#load "oBuffer.d.cmo";;
+#load "obuffer.d.cmo";;
 #load "interpreter.d.cmo";;
 #load "controller.d.cmo";;
