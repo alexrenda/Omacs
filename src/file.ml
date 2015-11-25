@@ -16,7 +16,7 @@ let get_contents (file:t) : string =
   contents
 
 let get_name = Filename.basename
-let get_path = Filename.dirname
+let get_path f = f
 let write_string (file:t) (str:string) : unit =
   let stream = open_out file in
   output_string stream str;
