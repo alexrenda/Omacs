@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+cs3110 compile test_interp.ml &&
+cs3110 run test_interp.ml $1
