@@ -1,7 +1,7 @@
 let concat_strings a b = a ^ " " ^ b
 let add_ints a b = a - b
-let alpha_to_unit a = Printf.printf "1\n"
-let unit_to_unit () = Printf.printf "2\n"
+let alpha_to_unit a = ()
+let unit_to_unit () = ()
 
 let _ = Interpreter.register_api_function "concat_strs" concat_strings
 let _ = Interpreter.register_api_function "add_ints" add_ints
@@ -22,4 +22,4 @@ let _ =
   try
     ignore (Controller.keypress c (Controller.Char 'x') b)
   with _ -> ()
-let _ = Printf.printf "we good\n"
+let _ = Printf.printf "done\n"
