@@ -3,10 +3,13 @@ let _ =
   with Not_found -> ()
 ;;
 #use "topfind";;
-#require "pa_ounit"
-#require "pa_ounit.syntax"
+#thread;;
+#require "dynlink";;
+#camlp4o;;
+#require "pa_ounit";;
+#require "pa_ounit.syntax";;
 #require "compiler-libs";;
-#require "compiler-libs.toplevel";;
+#require "compiler-libs.bytecomp";;
 #directory "_build";;
 #directory ".";;
 #load "file.d.cmo";;
