@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
 
 cs3110 compile test_interp.ml &&
-cs3110 run test_interp.ml $1
+    for file in tests/*.ml; do
+        echo "******* STARTING $file *******";
+        cs3110 run test_interp.ml $file &&
+        echo "******* ENDING $file *******";
+    done
