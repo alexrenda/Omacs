@@ -25,6 +25,5 @@ let run_hook (controller:t) (hook:hook) (buffer:OBuffer.t) : result =
   let callback = List.assoc hook controller.keypress_listeners in
   callback controller buffer
 
-(* TODOL fix this w.r.t interpreter *)
 let eval_file (controller:t) (file:File.t) : t =
   Interpreter.eval_file file controller
