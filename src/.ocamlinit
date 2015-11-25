@@ -1,1 +1,15 @@
+let _ =
+  try Topdirs.dir_directory (Sys.getenv "OCAML_TOPLEVEL_PATH")
+  with Not_found -> ()
+;;
+#use "topfind";;
+#require "pa_ounit"
+#require "pa_ounit.syntax"
 #require "compiler-libs";;
+#require "compiler-libs.toplevel";;
+#directory "_build";;
+#directory ".";;
+#load "file.d.cmo";;
+#load "oBuffer.d.cmo";;
+#load "interpreter.d.cmo";;
+#load "controller.d.cmo";;
