@@ -1,8 +1,13 @@
 type t
 (* types to represent a keypress and a hook. Likely these will just be
  * strings *)
-type key = string
-type hook = string
+type modifier = Control | Meta | Super
+type key =
+  | Char of char
+  | Mod of modifier * key
+  | Chain of key * key
+
+type hook = FileOpen | FileClose | FileSave
 
 (* A callback is a method that was parsed that is later ran as a
  * result of a keypress or hook. It takes in the state, and returns a *)

@@ -1,5 +1,11 @@
-type key = string
-type hook = string
+type modifier = Control | Meta | Super
+type key =
+  | Char of char
+  | Mod of modifier * key
+  | Chain of key * key
+
+type hook = FileOpen | FileClose | FileSave
+
 type ('a, 'b) api_function = string*('a -> 'b)
 
 (* TODO: make these more efficient data structures than assoc lists *)
@@ -22,7 +28,7 @@ let keypress (controller:t) (key:key) (buffer:OBuffer.t) =
   callback controller buffer
 
 let run_hook (controller:t) (hook:hook) (buffer:OBuffer.t) : result =
-  let callback = List.assoc hook controller.keypress_listeners in
+  let callback = List.assoc hook controller.hook_listeners in
   callback controller buffer
 
 let eval_file (controller:t) (file:File.t) : t =
