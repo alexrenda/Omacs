@@ -1,4 +1,4 @@
-open Obuffer
+open OBuffer
 
 let _ = print_endline "Output should be
 -----
@@ -45,7 +45,7 @@ let _ = print_endline (StringBuffer.get_text b)
 let b = StringBuffer.delete_char b
 
 let _ = print_endline (StringBuffer.get_text b)
-    
+
 let b = StringBuffer.move_cursor_right b
 let b = StringBuffer.delete_char b
 

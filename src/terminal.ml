@@ -3,7 +3,7 @@ open Curses
 type t = int
 
 let _ =
-  let buf = Obuffer.make_from_file (File.file_of_string "*SCRATCH*") in
+  let buf = OBuffer.make_from_file (File.file_of_string "*SCRATCH*") in
   let window = initscr () in
   let _ = noecho () in
   let _ = (window, buf) in
