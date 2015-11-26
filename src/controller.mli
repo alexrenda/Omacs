@@ -7,7 +7,10 @@ type key =
   | Mod of modifier * key
   | Chain of key * key
 
-type hook = FileOpen | FileClose | FileSave
+type hook =
+  | FileOpen
+  | FileSave
+  | FileClose
 
 (* A callback is a method that was parsed that is later ran as a
  * result of a keypress or hook. It takes in the state, and returns a *)
