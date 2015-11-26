@@ -17,19 +17,23 @@ and callback = t -> OBuffer.t -> result
 
 let create () = {keypress_listeners=[]; hook_listeners=[]}
 
-let register_keypress_event (controller:t) (key:key) (callback:callback) : t =
+let register_keypress_listener (controller:t) (key:key) (callback:callback) : t =
   {controller with keypress_listeners = (key, callback)::(controller.keypress_listeners)}
 
-let register_hook (controller:t) (hook:hook) (callback:callback) =
+let register_hook_listener (controller:t) (hook:hook) (callback:callback) =
   {controller with hook_listeners = (hook, callback)::(controller.hook_listeners)}
 
 let keypress (controller:t) (key:key) (buffer:OBuffer.t) =
-  let callback = List.assoc key controller.keypress_listeners in
-  callback controller buffer
+  try
+    let callback = List.assoc key controller.keypress_listeners in
+    callback controller buffer
+  with Not_found -> controller, buffer
 
 let run_hook (controller:t) (hook:hook) (buffer:OBuffer.t) : result =
-  let callback = List.assoc hook controller.hook_listeners in
-  callback controller buffer
+  try
+    let callback = List.assoc hook controller.hook_listeners in
+    callback controller buffer
+  with Not_found -> controller, buffer
 
 let eval_file (controller:t) (file:File.t) : t =
   Interpreter.eval_file file controller

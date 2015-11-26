@@ -4,7 +4,7 @@ let callback c b =
 ;;
 
 let register_callbacks (controller:Controller.t) : Controller.t =
-  let controller = Controller.register_keypress_event
+  let controller = Controller.register_keypress_listener
                      controller (Controller.Char 'x') callback in
   controller
 ;;

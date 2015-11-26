@@ -10,6 +10,6 @@ let register_callbacks (controller:Controller.t) : Controller.t =
   if p1 && p2 && p3 && p4 && p5 then
     Printf.printf "passed test\n%!"
   else
-    Printf.printf "failed test.\n%!";
+    Printf.printf "failed test\n%!";
   controller
 ;;

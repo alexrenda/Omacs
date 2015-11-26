@@ -19,8 +19,8 @@ val create : unit -> t
 
 (* register keypress and hook events - these will primarily be called *)
 (* by interpreted code *)
-val register_keypress_event : t -> key -> callback -> t
-val register_hook : t -> hook -> callback -> t
+val register_keypress_listener : t -> key -> callback -> t
+val register_hook_listener : t -> hook -> callback -> t
 
 (* tell the controller about a keypress or hook that should be ran. *)
 val keypress : t -> key -> OBuffer.t -> result

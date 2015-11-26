@@ -2,6 +2,7 @@ exception EvalError
 
 let devnull = open_out "/dev/null"
 let formatter = Format.formatter_of_out_channel devnull
+let devnull_fd = Unix.descr_of_out_channel devnull
 
 let id_counter = ref 0
 let create_type_for_var name =
@@ -34,7 +35,9 @@ let read_object name =
   Obj.obj (Toploop.getvalue name)
 
 let eval_file file =
+  Unix.dup2 devnull_fd Unix.stderr;
   ignore (Toploop.use_file formatter (File.get_path file));
+  Unix.dup2 Unix.stderr devnull_fd;
   read_object "register_callbacks"
 
 let register_api_function = write_object
