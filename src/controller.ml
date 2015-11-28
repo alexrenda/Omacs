@@ -33,10 +33,13 @@ let register_hook_listener (controller:t) (hook:hook) (callback:callback) =
   controller
 
 let keypress (controller:t) (key:key) (buffer:OBuffer.t) =
-  try
-    let callback = Hashtbl.find controller.keypress_listeners key in
-    callback controller buffer
-  with Not_found -> controller, buffer
+  match key with
+  | Char ch -> controller, OBuffer.insert_char_at_cursor buffer ch
+  | _ ->
+     try
+       let callback = Hashtbl.find controller.keypress_listeners key in
+       callback controller buffer
+     with Not_found -> controller, buffer
 
 let run_hook (controller:t) (hook:hook) (buffer:OBuffer.t) : result =
   let rec run_all_hooks controller buffer = function

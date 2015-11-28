@@ -14,6 +14,7 @@ let _ = Interpreter.register_api_function "concat_strs" concat_strings
 let _ = Interpreter.register_api_function "add_ints" add_ints
 let _ = Interpreter.register_api_function "alpha_to_unit" alpha_to_unit
 let _ = Interpreter.register_api_function "unit_to_unit" unit_to_unit
+let _ = Interpreter.register_api_function "unit_close_terminal" unit_to_unit
 
 let filename =
   let len = Array.length Sys.argv in
@@ -32,9 +33,11 @@ let _ = dup2 write stdout
 
 let c = Controller.eval_file controller f
 
-let x = Controller.Char 'x'
-let cx = Controller.Mod (Controller.Control, x)
-let keys_to_press = [x; cx; Controller.Chain (cx, x)]
+open Utils
+let keys_to_press = [key_of_string "C-x";
+                    key_of_string "C-xC-c";
+                    key_of_string "backspace"]
+
 let rec press_keys = function
   | [] -> ()
   | key::t ->

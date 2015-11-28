@@ -5,6 +5,6 @@ let callback c b =
 
 let register_callbacks (controller:Controller.t) : Controller.t =
   let controller = Controller.register_keypress_listener
-                     controller (Controller.Char 'x') callback in
+                     controller (Utils.key_of_string "C-x") callback in
   controller
 ;;

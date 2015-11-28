@@ -1,9 +1,10 @@
 let passed_tests = ref (Array.make 0 false)
 
 let register_callbacks (controller:Controller.t) : Controller.t =
-  let x = Controller.Char 'x' in
-  let cx = Controller.Mod (Controller.Control, x) in
-  let keys_to_test = [x; cx; Controller.Chain (cx, x)] in
+  let open Utils in
+  let keys_to_test = [key_of_string "C-x";
+                      key_of_string "C-xC-c";
+                      key_of_string "backspace"] in
   passed_tests := Array.make (List.length keys_to_test) false;
 
   let rec register_keys controller idx = function
