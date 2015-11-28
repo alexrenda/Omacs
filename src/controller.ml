@@ -1,6 +1,10 @@
 type modifier = Control | Meta | Super
+type special = | End | Home | PageDown | PageUp
+             | Up | Down | Left | Right
+             | Delete | Insert | Escape
 type key =
   | Char of char
+  | Special of special
   | Mod of modifier * key
   | Chain of key * key
 

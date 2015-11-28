@@ -4,11 +4,22 @@ let test_combos = ["{}", " {}", "{} "]
 
 let basic_keys =
   [("x", Char 'x');
-   ("space", Char ' ');
-   ("return", Char '\n');
+   ("tab", Char '\t');
    ("backspace", Char '\b');
-   ("tab", Char '\t')]
-
+   ("return", Char '\n');
+   ("space", Char ' ');
+   ("end", Special End);
+   ("home", Special Home);
+   ("pagedown", Special PageDown);
+   ("pageup", Special PageUp);
+   ("up", Special Up);
+   ("down", Special Down);
+   ("left", Special Left);
+   ("right", Special Right);
+   ("delete", Special Delete);
+   ("insert", Special Insert);
+   ("escape", Special Escape);
+  ]
 let rec gen_modifier_combos acc key =
   let str, key = key in
   let acc = ("C-"^str, Mod(Control, key)) :: acc in
