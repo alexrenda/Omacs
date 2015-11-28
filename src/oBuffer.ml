@@ -28,7 +28,10 @@ let delete_char_at_cursor (buf:t) =
   let new_text = left ^ right in
   {text=new_text; cursor=buf.cursor - 1; mark=buf.mark; file=buf.file}
 
-let write (buf:t) = ()
+let write (buf:t) =
+  File.write_string buf.file buf.text;
+  buf
+
 let get_file (buf:t) = buf.file
 
 (* Composed features! *)

@@ -19,5 +19,5 @@ val insert_char_at_cursor : t -> char -> t
 val delete_char_at_cursor : t -> t
 
 (* Basic file operations *)
-val write : t -> unit
+val write : t -> t
 val get_file : t -> File.t
