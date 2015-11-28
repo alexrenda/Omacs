@@ -5,7 +5,6 @@ let test_combos = ["{}", " {}", "{} "]
 let basic_keys =
   [("x", Char 'x');
    ("tab", Char '\t');
-   ("backspace", Char '\b');
    ("return", Char '\n');
    ("space", Char ' ');
    ("end", Special End);
@@ -16,6 +15,7 @@ let basic_keys =
    ("down", Special Down);
    ("left", Special Left);
    ("right", Special Right);
+   ("backspace", Special Backspace);
    ("delete", Special Delete);
    ("insert", Special Insert);
    ("escape", Special Escape);

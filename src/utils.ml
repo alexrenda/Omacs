@@ -3,7 +3,6 @@ open Controller
 let modifier_regexp = Str.regexp "\\([CMS]\\)-"
 let name_to_key_assoc_map =
   [("tab", Char '\t');
-   ("backspace", Char '\b');
    ("return", Char '\n');
    ("space", Char ' ');
    ("end", Special End);
@@ -14,6 +13,7 @@ let name_to_key_assoc_map =
    ("down", Special Down);
    ("left", Special Left);
    ("right", Special Right);
+   ("backspace", Special Backspace);
    ("delete", Special Delete);
    ("insert", Special Insert);
    ("escape", Special Escape);

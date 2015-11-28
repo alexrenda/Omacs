@@ -1,7 +1,7 @@
 type modifier = Control | Meta | Super
 type special = | End | Home | PageDown | PageUp
              | Up | Down | Left | Right
-             | Delete | Insert | Escape
+             | Backspace | Delete | Insert | Escape
 type key =
   | Char of char
   | Special of special
