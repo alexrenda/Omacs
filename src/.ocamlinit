@@ -5,6 +5,7 @@ let _ =
 #use "topfind";;
 #thread;;
 #require "dynlink";;
+#require "str";;
 #camlp4o;;
 #require "pa_ounit";;
 #require "pa_ounit.syntax";;
@@ -12,6 +13,7 @@ let _ =
 #require "compiler-libs.bytecomp";;
 #directory "_build";;
 #directory ".";;
+#load "utils.d.cmo";;
 #load "file.d.cmo";;
 #load "obuffer.d.cmo";;
 #load "interpreter.d.cmo";;

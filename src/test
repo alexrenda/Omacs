@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
 cs3110 compile test_interp.ml &&
-    for file in tests/*.ml; do
+    for file in tests/interpreter/*.ml; do
         if ! cs3110 run test_interp.ml $file ; then
             echo "$file FAILED!";
         else
             echo "$file passed";
         fi
-    done
+    done;
+cs3110 compile test_key_of_string.ml && cs3110 run test_key_of_string.ml
