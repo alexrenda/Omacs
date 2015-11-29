@@ -1,7 +1,12 @@
 type pos = int
 type t = {text:string; cursor:pos; mark:pos; file:File.t; width:int}
 
-let make_from_file file = {text=""; cursor=0; mark=0; file=file; width=80}
+let make_from_file file =
+  let text =
+    try File.get_contents file
+    with File.File_not_found -> ""
+  in
+  {text; cursor=0; mark=0; file=file; width=80}
 
 let get_text (buf:t) = buf.text
 let get_cursor (buf:t) = buf.cursor

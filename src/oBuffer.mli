@@ -9,6 +9,7 @@ val get_cursor : t -> pos
 val get_mark : t -> pos
 val get_col : t -> pos
 val get_row : t -> pos
+val get_width : t -> int
 
 (* Basic cursor interaction *)
 val set_cursor : t -> pos -> t
@@ -21,6 +22,7 @@ val move_cursor_to_end : t -> t
 
 val set_col : t -> pos -> t
 val set_row : t -> pos -> t
+val set_width : t -> int -> t
 
 (* Basic text interaction *)
 val set_text : t -> string -> t

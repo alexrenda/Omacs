@@ -1,5 +1,7 @@
 type t
 
+exception File_not_found
+
 val file_of_string : string -> t
 
 val get_contents : t -> string
