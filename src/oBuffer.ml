@@ -1,7 +1,7 @@
 open Core
 
 type pos = char Doubly_linked.Elt.t option
-type t = {text:char Doubly_linked.t; cursor:pos; mark:pos(*; file:File.t*)}
+type t = {text:char Doubly_linked.t; cursor:pos; mark:pos; file:File.t}
 
 let make_from_file file = {text=Doubly_linked.create (); 
                            cursor=None; 
