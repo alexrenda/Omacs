@@ -8,33 +8,57 @@ let make_from_file file = {text=Doubly_linked.create ();
                            mark=None; 
                            file=file}
 
-let get_text (buf:t) = buf.text
+let get_text (buf:t) = 
+    let concat accum c = accum^(Char.escaped c) in
+    Doubly_linked.fold buf.text ~f:concat ~init:""
 let get_cursor (buf:t) = buf.cursor
 let get_mark (buf:t) = buf.mark
 
 let set_cursor (buf:t) (pos:pos) =
   {buf with cursor=pos}
 let move_cursor_right (buf:t) =
-  {buf with cursor=buf.cursor + 1}
+    match buf.cursor with
+    | Some c -> 
+        {buf with cursor=Doubly_linked.next c}
+    | None -> 
+        {buf with cursor=Doubly_linked.first_elt buf.text}
 let move_cursor_left (buf:t) =
-  {buf with cursor=buf.cursor - 1}
+    match buf.cursor with
+    | Some c -> 
+        {buf with cursor=Doubly_linked.prev c}
+    | None -> 
+        {buf with cursor=Doubly_linked.first_elt buf.text}
 
-let set_text (buf:t) (text:string) = {buf with text=text}
+let set_text (buf:t) (text:string) = 
+    let temp = Doubly_linked.create () in
+    String.iter (fun c -> ignore(Doubly_linked.insert_last temp c)) text;
+    {buf with text=temp}
 
 let insert_char_at_cursor (buf:t) (chr:char) =
-  let left = String.sub buf.text 0 buf.cursor in
-  let right = String.sub buf.text buf.cursor (String.length buf.text - buf.cursor) in
-  let new_text = left ^ (String.make 1 chr) ^ right in
-  {text=new_text; cursor=buf.cursor + 1; mark=buf.mark; file=buf.file}
+  match buf.cursor with 
+  | Some c -> 
+          ignore(Doubly_linked.insert_before buf.text c chr);
+          buf
+  | None -> 
+          ignore(Doubly_linked.insert_first buf.text chr);
+          buf
 
 let delete_char_at_cursor (buf:t) =
-  let left = String.sub buf.text 0 (buf.cursor - 1) in
-  let right = String.sub buf.text buf.cursor (String.length buf.text - buf.cursor) in
-  let new_text = left ^ right in
-  {text=new_text; cursor=buf.cursor - 1; mark=buf.mark; file=buf.file}
+  match buf.cursor with 
+  | Some c -> 
+          if Doubly_linked.is_last buf.text c then
+              let cursor = Doubly_linked.prev buf.text c in
+              Doubly_linked.remove buf.text c;
+              {buf with cursor=cursor}
+          else
+              let cursor = Doubly_linked.next buf.text c in
+              Doubly_linked.remove buf.text c;
+              {buf with cursor=cursor}
+  | None -> 
+          buf
 
 let write (buf:t) =
-  File.write_string buf.file buf.text;
+  File.write_string buf.file (get_text buf);
   buf
 
 let get_file (buf:t) = buf.file
