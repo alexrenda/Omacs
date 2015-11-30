@@ -1,4 +1,4 @@
-open Controller
+open Key
 
 let test_combos = ["{}", " {}", "{} "]
 
@@ -29,7 +29,7 @@ let rec gen_modifier_combos acc key =
 let rec assert_correctness = function
   | [] -> ()
   | (str, key)::t ->
-     if Utils.key_of_string str = key then
+     if Key.key_of_string str = key then
        assert_correctness t
      else
        failwith str

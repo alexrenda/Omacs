@@ -1,7 +1,7 @@
 let passed_tests = ref (Array.make 0 false)
 
 let register_callbacks (controller:Controller.t) : Controller.t =
-  let open Utils in
+  let open Key in
   let keys_to_test = [key_of_string "C-x";
                       key_of_string "C-xC-c";
                       key_of_string "backspace"] in

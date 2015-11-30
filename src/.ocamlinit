@@ -16,6 +16,7 @@ let _ =
 #directory ".";;
 #load "utils.d.cmo";;
 #load "file.d.cmo";;
+#load "key.d.cmo";;
 #load "interpreter.d.cmo";;
 #load "obuffer.d.cmo";;
 #load "controller.d.cmo";;

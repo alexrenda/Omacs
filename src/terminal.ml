@@ -10,6 +10,7 @@ let return, (>>=) = Lwt.return, Lwt.(>>=)
 
 let running = ref true
 let key_to_print = ref None
+let status_str = ref ""
 
 let filename =
   let len = Array.length Sys.argv in
@@ -22,22 +23,23 @@ let rec main_loop ui controller buf_ref last_key =
     let this_key =
       match event with
       | LTerm_event.Key key -> let keystr = LTerm_key.to_string_compact key in
-                               Some (Utils.key_of_string keystr)
+                               Some (Key.key_of_string keystr)
       | _ -> None
     in
     let run_keypress = function
       | Some key ->
-         let controller, buffer = Controller.keypress controller
-                                                      key !buf_ref in
+         let str, (controller, buffer) = Controller.keypress_and_output
+                                           controller key !buf_ref in
          buf_ref := buffer;
+         status_str := str;
          controller
       | _ -> controller
     in
     let next_key = match this_key, last_key with
       | (None, _) -> None
       | (Some key, None) -> Some key
-      | (Some this_key, Some (Controller.Mod (m, k))) ->
-         Some (Controller.Chain (Controller.Mod (m, k), this_key))
+      | (Some this_key, Some (Key.Mod (m, k))) ->
+         Some (Key.Chain (Key.Mod (m, k), this_key))
       | (Some key, Some _) -> Some key
     in
     key_to_print := next_key;
@@ -85,17 +87,20 @@ let draw_status size ui buf =
   let rest = LTerm_draw.sub ui rest_rect in
   let file = OBuffer.get_file buf in
   let filename = File.get_name file in
-  let f_str = Printf.sprintf "File: %s" filename in
+  let top_line = Printf.sprintf "File: %s" filename in
   let key =
     match !key_to_print with
     | None -> ""
-    | Some key -> Utils.string_of_key key
+    | Some key -> Key.string_of_key key
   in
-  let k_str = Printf.sprintf "Key: %s" key in
+  let key_str = Printf.sprintf "  %s" key in
+  let room_for_status = status_size.cols - 8 - (String.length key_str) in
+  let status_str = Printf.sprintf "Status: %-.*s" room_for_status !status_str in
+  let bottom_line = Printf.sprintf "%s%s" status_str key_str in
   let status_width = status_size.cols in
   let status_str = Printf.sprintf "%-*s\n%-*s"
-                                  status_width f_str
-                                  status_width k_str in
+                                  status_width top_line
+                                  status_width bottom_line in
   LTerm_draw.draw_styled status 0 0 (eval [B_fg LTerm_style.lwhite;
                                            S status_str;
                                            E_fg]);

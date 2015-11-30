@@ -1,16 +1,7 @@
 type t
+open Key
 (* types to represent a keypress and a hook. Likely these will just be
  * strings *)
-type modifier = Control | Meta
-type special = | End | Home | PageDown | PageUp
-             | Up | Down | Left | Right
-             | Backspace | Delete | Insert | Escape
-type key =
-  | Char of char
-  | Special of special
-  | Mod of modifier * key
-  | Chain of key * key
-
 type hook =
   | FileOpen
   | FileSave
@@ -32,5 +23,7 @@ val register_hook_listener : t -> hook -> callback -> t
 (* tell the controller about a keypress or hook that should be ran. *)
 val keypress : t -> key -> OBuffer.t -> result
 val run_hook : t -> hook -> OBuffer.t -> result
+val keypress_and_output : t -> key -> OBuffer.t -> string*result
+val run_hook_and_output : t -> hook -> OBuffer.t -> string*result
 
-val eval_file : t -> File.t -> t
+val eval_file : ?debug:bool -> t -> File.t -> t

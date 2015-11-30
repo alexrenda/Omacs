@@ -1,4 +1,5 @@
 let register_callbacks (controller:Controller.t) : Controller.t =
+  let open Key in
   let open Controller in
   let open Utils in
   let special_function_map =
