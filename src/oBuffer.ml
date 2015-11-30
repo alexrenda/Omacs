@@ -1,7 +1,7 @@
 open Core
 
 type pos = char Doubly_linked.Elt.t option
-type t = {text:char Doubly_linked.t; cursor:pos; mark:pos; file:File.t}
+type t = {text:char Doubly_linked.t; cursor:pos; mark:pos(*; file:File.t*)}
 
 let make_from_file file = {text=Doubly_linked.create (); 
                            cursor=None; 
@@ -18,21 +18,27 @@ let set_cursor (buf:t) (pos:pos) =
   {buf with cursor=pos}
 let move_cursor_right (buf:t) =
     match buf.cursor with
-    | Some c -> 
-        {buf with cursor=Doubly_linked.next c}
+    | Some c ->
+        if Doubly_linked.is_last buf.text c then 
+          buf
+        else
+          {buf with cursor=Doubly_linked.next buf.text c}
     | None -> 
         {buf with cursor=Doubly_linked.first_elt buf.text}
 let move_cursor_left (buf:t) =
     match buf.cursor with
     | Some c -> 
-        {buf with cursor=Doubly_linked.prev c}
+        if Doubly_linked.is_first buf.text c then 
+          buf
+        else
+          {buf with cursor=Doubly_linked.prev buf.text c}
     | None -> 
-        {buf with cursor=Doubly_linked.first_elt buf.text}
+        buf
 
 let set_text (buf:t) (text:string) = 
     let temp = Doubly_linked.create () in
     String.iter (fun c -> ignore(Doubly_linked.insert_last temp c)) text;
-    {buf with text=temp}
+    {buf with text=temp; cursor=None; mark=None}
 
 let insert_char_at_cursor (buf:t) (chr:char) =
   match buf.cursor with 
@@ -41,19 +47,20 @@ let insert_char_at_cursor (buf:t) (chr:char) =
           buf
   | None -> 
           ignore(Doubly_linked.insert_first buf.text chr);
-          buf
+          let cursor' = Doubly_linked.first_elt buf.text in
+          {buf with cursor=cursor'}
 
 let delete_char_at_cursor (buf:t) =
   match buf.cursor with 
   | Some c -> 
           if Doubly_linked.is_last buf.text c then
-              let cursor = Doubly_linked.prev buf.text c in
+              let cursor' = Doubly_linked.prev buf.text c in
               Doubly_linked.remove buf.text c;
-              {buf with cursor=cursor}
+              {buf with cursor=cursor'}
           else
-              let cursor = Doubly_linked.next buf.text c in
+              let cursor' = Doubly_linked.next buf.text c in
               Doubly_linked.remove buf.text c;
-              {buf with cursor=cursor}
+              {buf with cursor=cursor'}
   | None -> 
           buf
 
