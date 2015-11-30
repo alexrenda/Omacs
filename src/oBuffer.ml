@@ -1,13 +1,14 @@
 type pos = int
 type t = {text:string; cursor:pos; mark:pos; file:File.t; width:int; height:int;
-          view_row:int}
+          view_row:int; length:int}
 
 let make_from_file file width height =
   let text =
     try File.get_contents file
     with File.File_not_found -> ""
   in
-  {text; cursor=0; mark=0; file; width; height; view_row=0}
+  {text; cursor=0; mark=0; file; width; height; view_row=0;
+   length=String.length text}
 
 let get_text (buf:t) = buf.text
 let get_cursor (buf:t) = buf.cursor
@@ -39,9 +40,10 @@ let get_col (buf:t) =
   dist_since_newline buf mod buf.width
 
 let set_col (buf:t) (col:int) =
-  assert (col >= 0 && col < buf.width);
+  let col = max col 0 in
   let curr_col = get_col buf in
-  {buf with cursor=buf.cursor - (curr_col - col)}
+  let to_col = buf.cursor - (curr_col - col) in
+  {buf with cursor=to_col}
 
 let get_row (buf:t) =
   let rec get_row_helper row idx =
@@ -57,7 +59,7 @@ let get_row (buf:t) =
   get_row_helper 0 0
 
 let set_row (buf:t) (dest_row:int) =
-  assert (dest_row >= 0);
+  let dest_row = max dest_row 0 in
   let curr_col = get_col buf in
   let rec set_row_helper row idx =
     if row = dest_row then
@@ -76,15 +78,16 @@ let set_row (buf:t) (dest_row:int) =
 let set_cursor (buf:t) (pos:pos) =
   {buf with cursor=pos}
 let move_cursor_right (buf:t) =
-  {buf with cursor=buf.cursor + 1}
+  {buf with cursor=min (buf.cursor + 1) buf.length}
 let move_cursor_left (buf:t) =
-  {buf with cursor=buf.cursor - 1}
+  {buf with cursor=max (buf.cursor - 1) 0}
 
 let move_cursor_up (buf:t) =
   let curr_col = get_col buf in
   let buf = set_col buf 0 in
   let buf = move_cursor_left buf in
-  set_col buf curr_col
+  let last = set_col buf curr_col in
+  last
 
 let move_cursor_down (buf:t) =
   let curr_col = get_col buf in
@@ -97,20 +100,20 @@ let move_cursor_to_beginning (buf:t) =
 let move_cursor_to_end (buf:t) =
   {buf with cursor=String.length buf.text - 1}
 
-let set_text (buf:t) (text:string) = {buf with text=text}
+let set_text (buf:t) (text:string) = {buf with text;length=String.length text}
 
 let insert_char_at_cursor (buf:t) (chr:char) =
   let left = String.sub buf.text 0 buf.cursor in
   let right = String.sub buf.text buf.cursor (String.length buf.text - buf.cursor) in
   let new_text = left ^ (String.make 1 chr) ^ right in
-  {buf with text=new_text; cursor=buf.cursor + 1}
+  {buf with text=new_text; cursor=buf.cursor + 1; length=buf.length + 1}
 
 let delete_char_at_cursor (buf:t) =
   try
     let left = String.sub buf.text 0 (buf.cursor - 1) in
     let right = String.sub buf.text buf.cursor (String.length buf.text - buf.cursor) in
     let new_text = left ^ right in
-    {buf with text=new_text; cursor=buf.cursor - 1}
+    {buf with text=new_text; cursor=buf.cursor - 1; length=buf.length - 1}
   with Invalid_argument _ -> buf
 
 let write (buf:t) =
