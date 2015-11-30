@@ -1,7 +1,12 @@
-type pos = int
-type t = {text:string; cursor:pos; mark:pos; file:File.t}
+open Core
 
-let make_from_file file = {text=""; cursor=0; mark=0; file=file}
+type pos = char Doubly_linked.Elt.t option
+type t = {text:char Doubly_linked.t; cursor:pos; mark:pos; file:File.t}
+
+let make_from_file file = {text=Doubly_linked.create (); 
+                           cursor=None; 
+                           mark=None; 
+                           file=file}
 
 let get_text (buf:t) = buf.text
 let get_cursor (buf:t) = buf.cursor
@@ -34,13 +39,3 @@ let write (buf:t) =
 
 let get_file (buf:t) = buf.file
 
-(* Composed features! *)
-
-let insert_string (buf:t) (str:string) : t =
-  let b : t ref = ref buf in
-  String.iter (fun c -> b := insert_char_at_cursor !b c) str;
-  !b
-
-let rec delete_many_chars (buf:t) (n:int) : t =
-  if n > 0 then delete_many_chars (delete_char_at_cursor buf) (n - 1)
-  else buf
