@@ -6,6 +6,7 @@ let _ =
 #thread;;
 #require "dynlink";;
 #require "str";;
+#require "lambda-term";;
 #camlp4o;;
 #require "pa_ounit";;
 #require "pa_ounit.syntax";;
@@ -15,6 +16,10 @@ let _ =
 #directory ".";;
 #load "utils.d.cmo";;
 #load "file.d.cmo";;
-#load "obuffer.d.cmo";;
+#load "key.d.cmo";;
 #load "interpreter.d.cmo";;
+#load "obuffer.d.cmo";;
 #load "controller.d.cmo";;
+#load "terminal.d.cmo";;
+
+let (>>=) = Lwt.(>>=);;

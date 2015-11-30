@@ -1,7 +1,8 @@
 exception EvalError
 
 let devnull = open_out "/dev/null"
-let formatter = Format.formatter_of_out_channel devnull
+let formatter_stdout = Format.formatter_of_out_channel stdout
+let formatter_devnull = Format.formatter_of_out_channel devnull
 let devnull_fd = Unix.descr_of_out_channel devnull
 
 let id_counter = ref 0
@@ -34,8 +35,14 @@ let write_object name obj =
 let read_object name =
   Obj.obj (Toploop.getvalue name)
 
-let eval_file file =
-  Unix.dup2 devnull_fd Unix.stderr;
+let eval_file debug file =
+  let formatter =
+    if debug then
+      formatter_stdout
+    else
+      let _ = Unix.dup2 devnull_fd Unix.stderr in
+      formatter_devnull
+  in
   ignore (Toploop.use_file formatter (File.get_path file));
   Unix.dup2 Unix.stderr devnull_fd;
   read_object "register_callbacks"
@@ -50,6 +57,6 @@ let _ =
   let file_text = File.get_contents ocamlinit in
   let lexed = Lexing.from_string file_text in
   let parsed = !Toploop.parse_toplevel_phrase lexed in
-  ignore(Toploop.execute_phrase false formatter parsed);
+  ignore(Toploop.execute_phrase false formatter_devnull parsed);
   Topdirs.dir_directory ".";
   Topdirs.dir_directory "_build"

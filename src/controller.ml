@@ -1,12 +1,4 @@
-type modifier = Control | Meta | Super
-type special = | End | Home | PageDown | PageUp
-             | Up | Down | Left | Right
-             | Backspace | Delete | Insert | Escape
-type key =
-  | Char of char
-  | Special of special
-  | Mod of modifier * key
-  | Chain of key * key
+open Key
 
 type hook =
   | FileOpen
@@ -21,8 +13,14 @@ type t = {keypress_listeners: (key, callback) Hashtbl.t;
 and result = t*OBuffer.t
 and callback = t -> OBuffer.t -> result
 
-let create () = {keypress_listeners=Hashtbl.create 37;
-                 hook_listeners=Hashtbl.create 37}
+let eval_file ?debug:(debug=false) (controller:t) (file:File.t) : t =
+  Interpreter.eval_file debug file controller
+
+let create () =
+  let self = {keypress_listeners=Hashtbl.create 37;
+              hook_listeners=Hashtbl.create 37} in
+  let file = File.file_of_string ".oca.ml" in
+  eval_file self file
 
 let register_keypress_listener (controller:t) (key:key) (callback:callback) : t =
   Hashtbl.add controller.keypress_listeners key callback;
@@ -32,7 +30,7 @@ let register_hook_listener (controller:t) (hook:hook) (callback:callback) =
   Hashtbl.add controller.hook_listeners hook callback;
   controller
 
-let keypress (controller:t) (key:key) (buffer:OBuffer.t) =
+let keypress (controller:t) (key:key) (buffer:OBuffer.t) : result =
   match key with
   | Char ch -> controller, OBuffer.insert_char_at_cursor buffer ch
   | _ ->
@@ -40,6 +38,9 @@ let keypress (controller:t) (key:key) (buffer:OBuffer.t) =
        let callback = Hashtbl.find controller.keypress_listeners key in
        callback controller buffer
      with Not_found -> controller, buffer
+
+let keypress_and_output controller key buffer =
+  Utils.capture_output (fun () -> keypress controller key buffer) ()
 
 let run_hook (controller:t) (hook:hook) (buffer:OBuffer.t) : result =
   let rec run_all_hooks controller buffer = function
@@ -50,5 +51,5 @@ let run_hook (controller:t) (hook:hook) (buffer:OBuffer.t) : result =
   let all_hooks = Hashtbl.find_all controller.hook_listeners hook in
   run_all_hooks controller buffer all_hooks
 
-let eval_file (controller:t) (file:File.t) : t =
-  Interpreter.eval_file file controller
+let run_hook_and_output controller hook buffer =
+  Utils.capture_output (fun () -> run_hook controller hook buffer) ()

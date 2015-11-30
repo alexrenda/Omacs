@@ -22,42 +22,27 @@ let filename =
 
 let controller = Controller.create ()
 let f = File.file_of_string filename
-let b = OBuffer.make_from_file f
+let b = OBuffer.make_from_file f 80 80
+let str, controller = Utils.capture_output
+                        (Controller.eval_file ~debug:false controller) f
+let _ = Terminal.do_nothing ()
 
-open Unix
-let read, write = pipe ()
-let old_stdout = dup stdout
-let old_stdout_channel = out_channel_of_descr old_stdout
-
-let _ = dup2 write stdout
-
-let c = Controller.eval_file controller f
-
-open Utils
+open Key
 let keys_to_press = [key_of_string "C-x";
                     key_of_string "C-xC-c";
                     key_of_string "backspace"]
 
-let rec press_keys = function
-  | [] -> ()
+let rec press_keys str controller buffer = function
+  | [] -> str, (controller, buffer)
   | key::t ->
-     let _ = Controller.keypress c key b in
-     press_keys t
-let _ = press_keys keys_to_press
+     let s, (c, b) = Controller.keypress_and_output controller key buffer in
+     let str = s ^ str in
+     press_keys str controller buffer t
 
-let _ = dup2 old_stdout stdout
-
-let read_channel = in_channel_of_descr read
+let str, (_, _) = press_keys str controller b keys_to_press
 
 
-let passed =
-  let ready, _, _ = Unix.select [read] [] [] 0.1 in
-  if List.length ready = 0 then
-    false
-  else
-    let line = input_line read_channel in
-    contains line "passed"
-
+let passed = contains str "passed"
 let _ = if not passed then
           exit 1
         else
