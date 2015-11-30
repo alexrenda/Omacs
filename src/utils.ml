@@ -1,6 +1,6 @@
 open Controller
 
-let modifier_regexp = Str.regexp "\\([CMS]\\)-"
+let modifier_regexp = Str.regexp "\\([CM]\\)-"
 let name_to_key_assoc_map =
   [("tab", Char '\t');
    ("return", Char '\n');
@@ -18,6 +18,9 @@ let name_to_key_assoc_map =
    ("insert", Special Insert);
    ("escape", Special Escape);
   ]
+let key_to_name_assoc_map =
+  let names, keys = List.split name_to_key_assoc_map in
+  List.combine keys names
 
 let key_regexp =
   let all_keys = List.fold_left (fun acc (str, _) -> str::acc) ["[a-z]"]
@@ -36,7 +39,6 @@ let key_of_string str =
         match Str.matched_string str with
         | "C-" -> Control
         | "M-" -> Meta
-        | "S-" -> Super
         | _ -> failwith "Exceptional case - regexp did not meet postcondition"
       in
       let rest, last_idx = get_mod_key (idx + 2) in
@@ -65,3 +67,16 @@ let key_of_string str =
   match chain_keys 0 with
   | Some key -> key
   | None -> failwith ("Bad key expression: " ^ str)
+
+
+let rec string_of_key = function
+  | Mod (Control, k) -> "C-" ^ (string_of_key k)
+  | Mod (Meta, k) -> "M-" ^ (string_of_key k)
+  | Chain (k1, k2) -> (string_of_key k1) ^ " " ^ (string_of_key k2)
+  | Char '\t' -> "tab"
+  | Char '\n' -> "return"
+  | Char ' ' -> "space"
+  | Char c -> Char.escaped c
+  | Special spec -> List.assoc (Special spec) key_to_name_assoc_map
+
+let do_nothing () = ()

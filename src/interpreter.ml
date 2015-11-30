@@ -35,7 +35,7 @@ let read_object name =
   Obj.obj (Toploop.getvalue name)
 
 let eval_file file =
-  Unix.dup2 devnull_fd Unix.stderr;
+  (*Unix.dup2 devnull_fd Unix.stderr;*)
   ignore (Toploop.use_file formatter (File.get_path file));
   Unix.dup2 Unix.stderr devnull_fd;
   read_object "register_callbacks"

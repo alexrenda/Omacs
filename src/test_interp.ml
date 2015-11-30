@@ -22,7 +22,8 @@ let filename =
 
 let controller = Controller.create ()
 let f = File.file_of_string filename
-let b = OBuffer.make_from_file f
+let b = OBuffer.make_from_file f 80 80
+let _ = Terminal.do_nothing ()
 
 open Unix
 let read, write = pipe ()

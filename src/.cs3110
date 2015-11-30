@@ -1,1 +1,1 @@
-compile.opam_packages=compiler-libs compiler-libs.toplevel Curses str
+compile.opam_packages=compiler-libs compiler-libs.toplevel lambda-term str

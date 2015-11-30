@@ -24,7 +24,6 @@ let rec gen_modifier_combos acc key =
   let str, key = key in
   let acc = ("C-"^str, Mod(Control, key)) :: acc in
   let acc = ("M-"^str, Mod(Meta, key)) :: acc in
-  let acc = ("S-"^str, Mod(Super, key)) :: acc in
   acc
 
 let rec assert_correctness = function

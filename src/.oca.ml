@@ -17,11 +17,12 @@ let register_callbacks (controller:Controller.t) : Controller.t =
 
   let controller = List.fold_left accumulator controller special_function_map in
 
-  let save_func c b = c, OBuffer.write b in
+  let save_func c b = Printf.printf "Saved buffer%!";
+                      c, OBuffer.write b in
   let controller = register_keypress_listener
                      controller (key_of_string "C-x C-s") save_func in
 
-  let close_func c b = close_terminal ();
+  let close_func c b = Terminal.close ();
                        c, b in
   let controller = register_keypress_listener
                      controller (key_of_string "C-x C-c") close_func in

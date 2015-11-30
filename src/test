@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+declare -a sources=(controller.ml interpreter.ml oBuffer.ml file.ml utils.ml main.ml)
+for file in "${sources[@]}"; do
+    if ! cs3110 compile $file ; then
+        exit 1;
+    fi;
+done;
+
 cs3110 compile test_interp.ml &&
     for file in tests/interpreter/*.ml; do
         if ! cs3110 run test_interp.ml $file ; then

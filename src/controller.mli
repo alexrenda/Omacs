@@ -1,7 +1,7 @@
 type t
 (* types to represent a keypress and a hook. Likely these will just be
  * strings *)
-type modifier = Control | Meta | Super
+type modifier = Control | Meta
 type special = | End | Home | PageDown | PageUp
              | Up | Down | Left | Right
              | Backspace | Delete | Insert | Escape
