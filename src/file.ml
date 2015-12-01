@@ -3,7 +3,7 @@ type t = string
 exception File_not_found
 
 let home = Sys.getenv "HOME"
-let expand = Str.global_replace (Str.regexp "~") home
+let expand = Str.global_replace (Str.regexp "^~") home
 
 let file_of_string (file:string) : t =
   expand file
@@ -34,8 +34,10 @@ let exists = Sys.file_exists
 let is_directory = Sys.is_directory
 
 let get_files_in_directory dir =
+  let dir = dir ^ "/" in
   let filename = get_path dir in
   try
     let files = Array.to_list (Sys.readdir filename) in
+    let files = List.map ((^) dir) files in
     List.map file_of_string files
   with Sys_error _ -> []
