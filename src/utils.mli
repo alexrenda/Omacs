@@ -1,5 +1,6 @@
 val capture_output :  ('a->'b) -> 'a -> string*'b
 val capture_output_option : ('a->'b option) -> 'a -> (string*'b) option
+val to_string_compact : LTerm_key.t -> string
 (* see terminal.mli *)
 val do_nothing : unit -> unit
 

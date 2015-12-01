@@ -31,7 +31,7 @@ let key_to_name_assoc_map =
   List.combine keys names
 
 let key_regexp =
-  let all_keys = List.fold_left (fun acc (str, _) -> str::acc) ["[a-z]"]
+  let all_keys = List.fold_left (fun acc (str, _) -> str::acc) ["[\x00-\x7f]"]
                                 name_to_key_assoc_map in
   let group_statement = String.concat "\\|" all_keys in
   Str.regexp ("\\(" ^ group_statement ^ "\\)")

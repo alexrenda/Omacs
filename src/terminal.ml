@@ -22,8 +22,9 @@ let rec main_loop ui controller buf_ref prefix_key =
     fun event ->
     let this_key =
       match event with
-      | LTerm_event.Key key -> let keystr = LTerm_key.to_string_compact key in
-                               Some (Key.key_of_string keystr)
+      | LTerm_event.Key key -> let keystr = Utils.to_string_compact key in
+                               let key = Key.key_of_string keystr in
+                               Some key
       | _ -> None
     in
     let run_keypress = function
@@ -127,7 +128,6 @@ let draw ui matrix buf =
 
   let row = OBuffer.get_view_row !buf in
   let text_str = OBuffer.str_of_buffer !buf in
-  (* A9B7C6 *)
   LTerm_draw.draw_styled text (-row) 0 (eval [B_fg LTerm_style.default;
                                               S text_str;
                                               E_fg]);
