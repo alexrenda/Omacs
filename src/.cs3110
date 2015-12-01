@@ -1,1 +1,2 @@
-compile.opam_packages=compiler-libs compiler-libs.toplevel lambda-term str
+compile.opam_packages=compiler-libs compiler-libs.toplevel lambda-term str core
+compile.thread=true

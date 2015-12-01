@@ -8,6 +8,8 @@ let _ =
 #require "str";;
 #require "lambda-term";;
 #camlp4o;;
+#require "core.top"
+#require "core.syntax"
 #require "pa_ounit";;
 #require "pa_ounit.syntax";;
 #require "compiler-libs";;
@@ -18,7 +20,7 @@ let _ =
 #load "file.d.cmo";;
 #load "key.d.cmo";;
 #load "interpreter.d.cmo";;
-#load "obuffer.d.cmo";;
+#load "oBuffer.d.cmo";;
 #load "controller.d.cmo";;
 #load "terminal.d.cmo";;
 
