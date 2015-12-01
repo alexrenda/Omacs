@@ -21,11 +21,17 @@ let register_callbacks (controller:Controller.t) : Controller.t =
   let buffer_function_map =
     [("backspace", OBuffer.delete_char_at_cursor);
      ("left", OBuffer.move_cursor_left);
+     ("C-f", OBuffer.move_cursor_left);
      ("right", OBuffer.move_cursor_right);
+     ("C-b", OBuffer.move_cursor_right);
      ("up", OBuffer.move_cursor_up);
+     ("C-p", OBuffer.move_cursor_up);
      ("down", OBuffer.move_cursor_down);
+     ("C-n", OBuffer.move_cursor_up);
      ("end", OBuffer.move_cursor_to_end);
-     ("home", OBuffer.move_cursor_to_beginning)]
+     ("M->", OBuffer.move_cursor_to_end);
+     ("home", OBuffer.move_cursor_to_beginning);
+     ("M-<", OBuffer.move_cursor_to_beginning)]
   in
 
   let other_function_map =
