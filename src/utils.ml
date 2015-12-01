@@ -5,8 +5,6 @@ module type Monad = sig
   val (>>=) : 'a t -> ('a -> 'b t) -> 'b t
   end
 
-let do_nothing () = ()
-
 let capture_output (f:'a->'b) (a:'a) : string*'b =
   let open Unix in
   let read, write = pipe () in

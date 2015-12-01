@@ -4,7 +4,6 @@ let register_callbacks (controller:Controller.t) : Controller.t =
   let open Utils in
   let kill_buffer = ref None in
 
-
   let compose f1 f2 c b =
     let c, b = f1 c b in
     f2 c b
