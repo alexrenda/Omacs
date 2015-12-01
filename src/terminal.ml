@@ -17,36 +17,44 @@ let filename =
   try Sys.argv.(len - 1)
   with _ -> "*SCRATCH*"
 
-let rec main_loop ui controller buf_ref last_key =
+let rec main_loop ui controller buf_ref prefix_key =
   LTerm_ui.wait ui >>=
     fun event ->
     let this_key =
       match event with
-      | LTerm_event.Key key -> let keystr = LTerm_key.to_string_compact key in
-                               Some (Key.key_of_string keystr)
+      | LTerm_event.Key key -> let keystr = Utils.to_string_compact key in
+                               let key = Key.key_of_string keystr in
+                               Some key
       | _ -> None
     in
     let run_keypress = function
       | Some key ->
-         let str, (controller, buffer) = Controller.keypress_and_output
-                                           controller key !buf_ref in
-         buf_ref := buffer;
-         status_str := str;
-         controller
+         (match Controller.keypress_and_output controller key !buf_ref with
+         | Some (str, (controller, buffer)) ->
+            buf_ref := buffer;
+            status_str := str;
+            controller
+         | None -> controller)
       | _ -> controller
     in
-    let next_key = match this_key, last_key with
+    let action_key = match this_key, prefix_key with
       | (None, _) -> None
       | (Some key, None) -> Some key
       | (Some this_key, Some (Key.Mod (m, k))) ->
          Some (Key.Chain (Key.Mod (m, k), this_key))
       | (Some key, Some _) -> Some key
     in
-    key_to_print := next_key;
-    let controller = run_keypress next_key in
+    key_to_print := action_key;
+    let controller = run_keypress action_key in
+    let next_prefix_key =
+      let open Key in
+      match action_key with
+      | Some (Mod (Control, (Char 'x'))) -> action_key
+      | _ -> None
+    in
     LTerm_ui.draw ui;
     if !running then
-      main_loop ui controller buf_ref next_key
+      main_loop ui controller buf_ref next_prefix_key
     else
       return ()
 
@@ -120,7 +128,6 @@ let draw ui matrix buf =
 
   let row = OBuffer.get_view_row !buf in
   let text_str = OBuffer.str_of_buffer !buf in
-  (* A9B7C6 *)
   LTerm_draw.draw_styled text (-row) 0 (eval [B_fg LTerm_style.default;
                                               S text_str;
                                               E_fg]);

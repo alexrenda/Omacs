@@ -23,8 +23,7 @@ let filename =
 let controller = Controller.create ()
 let f = File.file_of_string filename
 let b = OBuffer.make_from_file f 80 80
-let str, controller = Utils.capture_output
-                        (Controller.eval_file ~debug:false controller) f
+let str, controller =  Controller.eval_file_and_output controller f
 let _ = Terminal.do_nothing ()
 
 open Key
@@ -35,9 +34,12 @@ let keys_to_press = [key_of_string "C-x";
 let rec press_keys str controller buffer = function
   | [] -> str, (controller, buffer)
   | key::t ->
-     let s, (c, b) = Controller.keypress_and_output controller key buffer in
-     let str = s ^ str in
-     press_keys str controller buffer t
+     let str, c, b =
+       match Controller.keypress_and_output controller key buffer with
+       | Some (s, (c, b)) -> str ^ s, c, b
+       | None -> str, controller, buffer
+     in
+     press_keys str c b t
 
 let str, (_, _) = press_keys str controller b keys_to_press
 

@@ -5,6 +5,7 @@ let _ =
 #use "topfind";;
 #thread;;
 #require "dynlink";;
+#require "core";;
 #require "str";;
 #require "lambda-term";;
 #camlp4o;;
