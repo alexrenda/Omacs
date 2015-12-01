@@ -7,8 +7,13 @@ type elt = char Doubly_linked.Elt.t option
 type t = {text:char Doubly_linked.t;
           mutable cursor:(elt*pos);
           mutable mark:(elt*pos) option;
+          mutable height:int;
+          mutable width:int;
+          mutable col:pos;
+          mutable row:pos;
           file:File.t}
 
+(* Helpful functions *)
 let (>>=) = Option.bind
 
 let elt_of_int lst count =
@@ -23,13 +28,14 @@ let elt_of_int lst count =
   in
   traverse lst (Doubly_linked.first_elt lst) count
 
-
+(* Constructor *)
 let make_from_file file cur mar =
   let text = Doubly_linked.create () in
-  (*let cursor = Doubly_linked.insert_first text ' ' in*)
   let start = (None, 0) in
-  {text=text; cursor=start; mark=None; file=file}
+  {text=text; cursor=start; mark=None;
+   height=0; width=0; col=0; row=0; file=file}
 
+(* Getters *)
 let get_text (buf:t) =
   let concat accum c = accum^(Char.escaped c) in
   Doubly_linked.fold buf.text ~f:concat ~init:""
@@ -40,8 +46,21 @@ let get_mark (buf:t) : mark = buf.mark
                               >>= fun (_, pos) ->
                               Some pos
 
+let get_height (buf:t) = buf.height
+
+let get_width (buf:t) = buf.width
+
+let get_row (buf:t) = buf.row
+
+let get_col (buf:t) = buf.col
+
+(* Setters *)
 let set_cursor (buf:t) (pos:pos) =
   buf.cursor <- (elt_of_int buf.text pos, pos);
+  buf
+
+let set_mark (buf:t) =
+  buf.mark <- Some buf.cursor;
   buf
 
 let move_cursor_right (buf:t) =
@@ -63,6 +82,21 @@ let move_cursor_left (buf:t) =
        buf.cursor <- (Doubly_linked.last_elt buf.text, (snd buf.cursor)-1);
      buf
 
+let set_height (buf:t) (height:int) =
+    buf.height <- height;
+    buf
+
+let set_width (buf:t) (width:int) =
+    buf.width <- width;
+    buf
+
+let set_row (buf:t) (pos:pos) =
+    buf.row <- pos;
+    buf
+
+let set_col (buf:t) (pos:pos) =
+    buf.col <- pos;
+    buf
 
 let set_text (buf:t) (text:string) =
   Doubly_linked.clear buf.text;
@@ -72,6 +106,7 @@ let set_text (buf:t) (text:string) =
   buf.mark <- None;
   buf
 
+(* Text operations *)
 let insert_char_at_cursor (buf:t) (chr:char) =
   match fst buf.cursor with
   | Some c ->
@@ -102,7 +137,7 @@ let delete_char_at_cursor (buf:t) =
      buf
   | None -> buf
 
-
+(* File operations *)
 let write (buf:t) =
   File.write_string buf.file (get_text buf);
   buf
@@ -113,21 +148,12 @@ let get_file (buf:t) = buf.file
 
 let str_of_buffer (buf:t) = failwith "Unimplemented"
 let set_view_row (buf:t) = failwith "Unimplemented"
-let set_height (buf:t) (height:int) = failwith "Unimplemented"
-let set_width (buf:t) (width:int) = failwith "Unimplemented"
-let set_row (buf:t) (pos:pos) = failwith "Unimplemented"
-let set_col (buf:t) (pos:pos) = failwith "Unimplemented"
-let set_mark (buf:t) = failwith "Unimplemented"
 let unset_mark (buf:t) = failwith "Unimplemented"
 let move_cursor_to_end (buf:t) = failwith "Unimplemented"
 let move_cursor_to_beginning (buf:t) = failwith "Unimplemented"
 let move_cursor_down (buf:t) = failwith "Unimplemented"
 let move_cursor_up (buf:t) = failwith "Unimplemented"
 let get_view_row (buf:t) = failwith "Unimplemented"
-let get_height (buf:t) = failwith "Unimplemented"
-let get_width (buf:t) = failwith "Unimplemented"
-let get_row (buf:t) = failwith "Unimplemented"
-let get_col (buf:t) = failwith "Unimplemented"
 let get_char_at_cursor (buf:t) = failwith "Unimplemented"
 let yank_text_between_positions (buf:t) (pos1:pos) (pos2:pos) = failwith "Unimplemented"
 let copy_text_between_positions (buf:t) (pos1:pos) (pos2:pos) = failwith "Unimplemented"
