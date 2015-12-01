@@ -40,6 +40,11 @@ let get_text (buf:t) =
   let concat accum c = accum^(Char.escaped c) in
   Doubly_linked.fold buf.text ~f:concat ~init:""
 
+ let get_char_at_cursor (buf:t) = failwith "Unimplemented"
+(*    match fst buf.cursor with
+    | Some c ->
+    | None *)
+
 let get_cursor (buf:t) = snd buf.cursor
 
 let get_mark (buf:t) : mark = buf.mark
@@ -62,6 +67,10 @@ let set_cursor (buf:t) (pos:pos) =
 let set_mark (buf:t) =
   buf.mark <- Some buf.cursor;
   buf
+
+let unset_mark (buf:t) =
+    buf.mark <- None;
+    buf
 
 let move_cursor_right (buf:t) =
   match fst buf.cursor with
@@ -145,15 +154,12 @@ let write (buf:t) =
 let get_file (buf:t) = buf.file
 
 
-
 let str_of_buffer (buf:t) = failwith "Unimplemented"
 let set_view_row (buf:t) = failwith "Unimplemented"
-let unset_mark (buf:t) = failwith "Unimplemented"
 let move_cursor_to_end (buf:t) = failwith "Unimplemented"
 let move_cursor_to_beginning (buf:t) = failwith "Unimplemented"
 let move_cursor_down (buf:t) = failwith "Unimplemented"
 let move_cursor_up (buf:t) = failwith "Unimplemented"
 let get_view_row (buf:t) = failwith "Unimplemented"
-let get_char_at_cursor (buf:t) = failwith "Unimplemented"
 let yank_text_between_positions (buf:t) (pos1:pos) (pos2:pos) = failwith "Unimplemented"
 let copy_text_between_positions (buf:t) (pos1:pos) (pos2:pos) = failwith "Unimplemented"
