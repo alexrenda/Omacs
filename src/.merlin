@@ -5,3 +5,4 @@ B _3110/
 
 PKG compiler-libs
 PKG lambda-term
+PKG core

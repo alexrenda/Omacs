@@ -21,9 +21,10 @@ val register_keypress_listener : t -> key -> callback -> t
 val register_hook_listener : t -> hook -> callback -> t
 
 (* tell the controller about a keypress or hook that should be ran. *)
-val keypress : t -> key -> OBuffer.t -> result
-val run_hook : t -> hook -> OBuffer.t -> result
-val keypress_and_output : t -> key -> OBuffer.t -> string*result
-val run_hook_and_output : t -> hook -> OBuffer.t -> string*result
+val keypress : t -> key -> OBuffer.t -> result option
+val run_hook : t -> hook -> OBuffer.t -> result option
+val keypress_and_output : t -> key -> OBuffer.t -> (string * result) option
+val run_hook_and_output : t -> hook -> OBuffer.t -> (string * result) option
 
 val eval_file : ?debug:bool -> t -> File.t -> t
+val eval_file_and_output : t -> File.t -> (string*t)

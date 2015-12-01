@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-declare -a sources=(controller.ml interpreter.ml oBuffer.ml file.ml utils.ml main.ml)
+declare -a sources=(controller.ml interpreter.ml oBuffer.ml file.ml utils.ml main.ml key.ml)
 for file in "${sources[@]}"; do
     if ! cs3110 compile $file ; then
         exit 1;

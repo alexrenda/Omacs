@@ -17,7 +17,7 @@ let filename =
   try Sys.argv.(len - 1)
   with _ -> "*SCRATCH*"
 
-let rec main_loop ui controller buf_ref last_key =
+let rec main_loop ui controller buf_ref prefix_key =
   LTerm_ui.wait ui >>=
     fun event ->
     let this_key =
@@ -28,25 +28,32 @@ let rec main_loop ui controller buf_ref last_key =
     in
     let run_keypress = function
       | Some key ->
-         let str, (controller, buffer) = Controller.keypress_and_output
-                                           controller key !buf_ref in
-         buf_ref := buffer;
-         status_str := str;
-         controller
+         (match Controller.keypress_and_output controller key !buf_ref with
+         | Some (str, (controller, buffer)) ->
+            buf_ref := buffer;
+            status_str := str;
+            controller
+         | None -> controller)
       | _ -> controller
     in
-    let next_key = match this_key, last_key with
+    let action_key = match this_key, prefix_key with
       | (None, _) -> None
       | (Some key, None) -> Some key
       | (Some this_key, Some (Key.Mod (m, k))) ->
          Some (Key.Chain (Key.Mod (m, k), this_key))
       | (Some key, Some _) -> Some key
     in
-    key_to_print := next_key;
-    let controller = run_keypress next_key in
+    key_to_print := action_key;
+    let controller = run_keypress action_key in
+    let next_prefix_key =
+      let open Key in
+      match action_key with
+      | Some (Mod (Control, (Char 'x'))) -> action_key
+      | _ -> None
+    in
     LTerm_ui.draw ui;
     if !running then
-      main_loop ui controller buf_ref next_key
+      main_loop ui controller buf_ref next_prefix_key
     else
       return ()
 
