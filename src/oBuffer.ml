@@ -27,7 +27,7 @@ let make_from_file file cur mar =
     let start = (Some cursor, 0) in
     {text=text; cursor=start; mark=start; file=file}
 
-let get_text (buf:t) = 
+let get_text (buf:t) =
     let concat accum c = accum^(Char.escaped c) in
     Doubly_linked.fold buf.text ~f:concat ~init:""
 
@@ -43,21 +43,21 @@ let set_cursor (buf:t) (pos:pos) =
 let move_cursor_right (buf:t) =
     match fst buf.cursor with
     | Some c ->
-        if not (Doubly_linked.is_last buf.text c) then 
+        if not (Doubly_linked.is_last buf.text c) then
             buf.cursor <- (Doubly_linked.next buf.text c, (snd buf.cursor)+1);
         buf
     | None -> failwith "Bad cursor"
 
 let move_cursor_left (buf:t) =
     match fst buf.cursor with
-    | Some c -> 
-        if not (Doubly_linked.is_first buf.text c) then 
+    | Some c ->
+        if not (Doubly_linked.is_first buf.text c) then
             buf.cursor <- (Doubly_linked.prev buf.text c, (snd buf.cursor)-1);
         buf
     | None -> failwith "Bad cursor"
 
 
-let set_text (buf:t) (text:string) = 
+let set_text (buf:t) (text:string) =
     Doubly_linked.clear buf.text;
     String.iter (fun c -> ignore(Doubly_linked.insert_last buf.text c)) (text^" ");
     let cursor = Doubly_linked.first_elt buf.text in
@@ -96,6 +96,7 @@ let set_height (buf:t) (height:int) = failwith "Unimplemented"
 let set_width (buf:t) (width:int) = failwith "Unimplemented"
 let set_row (buf:t) (pos:pos) = failwith "Unimplemented"
 let set_col (buf:t) (pos:pos) = failwith "Unimplemented"
+let set_mark (buf:t) = failwith "Unimplemented"
 let move_cursor_to_end (buf:t) = failwith "Unimplemented"
 let move_cursor_to_beginning (buf:t) = failwith "Unimplemented"
 let move_cursor_down (buf:t) = failwith "Unimplemented"
@@ -105,4 +106,4 @@ let get_height (buf:t) = failwith "Unimplemented"
 let get_width (buf:t) = failwith "Unimplemented"
 let get_row (buf:t) = failwith "Unimplemented"
 let get_col (buf:t) = failwith "Unimplemented"
-
+let pop_text_between_positions (buf:t) (pos1:pos) (pos2:pos) = failwith "Unimplemented"
