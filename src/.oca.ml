@@ -4,6 +4,17 @@ let register_callbacks (controller:Controller.t) : Controller.t =
   let open Utils in
   let kill_buffer = ref None in
 
+
+  let compose f1 f2 c b =
+    let c, b = f1 c b in
+    f2 c b
+  in
+  let (||>) = compose in
+  let wrap_bfun (callback:OBuffer.t -> OBuffer.t) (c:Controller.t) (b:OBuffer.t)
+      : Controller.t * OBuffer.t =
+    c, callback b
+  in
+
   let register c s f = register_keypress_listener c (key_of_string s) f in
   let save_func c b = Printf.printf "Saved buffer"; c, OBuffer.write b in
   let controller = register controller "C-x C-s" save_func in
@@ -56,7 +67,6 @@ let register_callbacks (controller:Controller.t) : Controller.t =
      ("C-space", OBuffer.set_mark)
     ]
   in
-
   let other_function_map =
     [("C-x C-s", save_func);
      ("C-x C-c", close_func);
@@ -65,21 +75,19 @@ let register_callbacks (controller:Controller.t) : Controller.t =
      ("C-w", yank_region);
      ("M-w", copy_region);
      ("C-y", paste_region);
+     ("C-k", beginning_of_line ||> (wrap_bfun OBuffer.set_mark) ||> end_of_line
+             ||> yank_region)
     ]
   in
+  let callback_buffer_functions = List.map (fun (a, b) -> a, (wrap_bfun b))
+                                           buffer_function_map in
+  let all_functions = callback_buffer_functions @ other_function_map in
 
-  let buffer_accumulator controller (key, callback) =
-    let callback_wrapper c b = c, callback b in
-    register_keypress_listener controller (key_of_string key) callback_wrapper
-  in
-  let other_accumulator controller (key, callback) =
+  let accumulator controller (key, callback) =
     register_keypress_listener controller (key_of_string key) callback
   in
 
-  let controller = List.fold_left buffer_accumulator controller
-                                  buffer_function_map in
-  let controller = List.fold_left other_accumulator controller
-                                  other_function_map in
+  let controller = List.fold_left accumulator controller all_functions in
 
   controller
 ;;
