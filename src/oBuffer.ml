@@ -23,8 +23,8 @@ let elt_of_int lst count =
 
 let make_from_file file cur mar =
     let text = Doubly_linked.create () in
-    let cursor = Doubly_linked.insert_first text ' ' in
-    let start = (Some cursor, 0) in
+    (*let cursor = Doubly_linked.insert_first text ' ' in*)
+    let start = (None, 0) in
     {text=text; cursor=start; mark=start; file=file}
 
 let get_text (buf:t) = 
@@ -43,10 +43,9 @@ let set_cursor (buf:t) (pos:pos) =
 let move_cursor_right (buf:t) =
     match fst buf.cursor with
     | Some c ->
-        if not (Doubly_linked.is_last buf.text c) then 
-            buf.cursor <- (Doubly_linked.next buf.text c, (snd buf.cursor)+1);
+        buf.cursor <- (Doubly_linked.next buf.text c, (snd buf.cursor)+1);
         buf
-    | None -> failwith "Bad cursor"
+    | None -> buf
 
 let move_cursor_left (buf:t) =
     match fst buf.cursor with
@@ -54,12 +53,15 @@ let move_cursor_left (buf:t) =
         if not (Doubly_linked.is_first buf.text c) then 
             buf.cursor <- (Doubly_linked.prev buf.text c, (snd buf.cursor)-1);
         buf
-    | None -> failwith "Bad cursor"
+    | None ->
+        if snd buf.cursor <> 0 then
+            buf.cursor <- (Doubly_linked.last_elt buf.text, (snd buf.cursor)-1);
+        buf
 
 
 let set_text (buf:t) (text:string) = 
     Doubly_linked.clear buf.text;
-    String.iter (fun c -> ignore(Doubly_linked.insert_last buf.text c)) (text^" ");
+    String.iter (fun c -> ignore(Doubly_linked.insert_last buf.text c)) text;
     let cursor = Doubly_linked.first_elt buf.text in
     buf.cursor <- (cursor, 0);
     buf.mark <- (cursor, 0);
@@ -70,16 +72,18 @@ let insert_char_at_cursor (buf:t) (chr:char) =
     | Some c ->
         ignore(Doubly_linked.insert_before buf.text c chr);
         buf
-    | None -> failwith "Bad cursor"
+    | None ->
+        ignore(Doubly_linked.insert_last buf.text chr);
+        buf.cursor <- (fst buf.cursor, (snd buf.cursor)+1);
+        buf
 
 let delete_char_at_cursor (buf:t) =
     match fst buf.cursor with
     | Some c ->
-        if not (Doubly_linked.is_last buf.text c) then (
-            ignore(move_cursor_right buf);
-            Doubly_linked.remove buf.text c);
+        buf.cursor <- (Doubly_linked.next buf.text c, snd buf.cursor);
+        Doubly_linked.remove buf.text c;
         buf
-    | None -> failwith "Bad cursor"
+    | None -> buf
 
 
 let write (buf:t) =
