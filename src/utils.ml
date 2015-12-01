@@ -102,3 +102,11 @@ let to_string_compact (key:LTerm_key.t) =
      | code ->
          Buffer.add_string buffer (String.lowercase (string_of_code code)));
   Buffer.contents buffer
+
+let string_ends_with ending str =
+  let end_len = String.length ending in
+  let str_len = String.length str in
+  if end_len > str_len then
+    false
+  else
+    String.sub str (str_len - end_len) end_len = ending

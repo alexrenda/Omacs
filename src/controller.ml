@@ -13,6 +13,9 @@ type t = {keypress_listeners: (key, callback) Hashtbl.t;
 and result = t*OBuffer.t
 and callback = t -> OBuffer.t -> result
 
+let (>>) f g x = g (f x)
+let (&+) f g x = f x && g x
+
 let eval_file ?debug:(debug=false) (controller:t) (file:File.t) : t =
   Interpreter.eval_file debug file controller
 
@@ -23,7 +26,20 @@ let create () =
   let self = {keypress_listeners=Hashtbl.create 37;
               hook_listeners=Hashtbl.create 37} in
   let file = File.file_of_string ".oca.ml" in
-  eval_file self file
+  let controller = eval_file self file in
+
+  let ocamldir = File.file_of_string "~/.oca.ml.d" in
+  let ocaml_files = File.get_files_in_directory ocamldir in
+  let is_ocaml_file f = Utils.string_ends_with ".oca.ml" (File.get_name f) in
+  let ocaml_files = List.filter (File.is_directory >> (not) &+ is_ocaml_file)
+                                ocaml_files in
+
+  let rec eval_all controller = function
+    | [] -> controller
+    | f::t -> let controller = eval_file controller file in
+              eval_all controller t
+  in
+  eval_all controller ocaml_files
 
 let register_keypress_listener (controller:t) (key:key) (callback:callback) : t =
   Hashtbl.add controller.keypress_listeners key callback;
