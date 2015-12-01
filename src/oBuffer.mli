@@ -45,4 +45,4 @@ val write : t -> t
 val get_file : t -> File.t
 
 
-val str_of_buffer : t -> string
+val text_of_buffer : t -> Style.stylized_text

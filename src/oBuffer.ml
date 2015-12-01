@@ -111,7 +111,7 @@ let get_file (buf:t) = buf.file
 
 
 
-let str_of_buffer (buf:t) = failwith "Unimplemented"
+let text_of_buffer (buf:t) = failwith "Unimplemented"
 let set_view_row (buf:t) = failwith "Unimplemented"
 let set_height (buf:t) (height:int) = failwith "Unimplemented"
 let set_width (buf:t) (width:int) = failwith "Unimplemented"
