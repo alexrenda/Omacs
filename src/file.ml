@@ -2,8 +2,11 @@ type t = string
 
 exception File_not_found
 
+let home = Sys.getenv "HOME"
+let expand = Str.global_replace (Str.regexp "~") home
+
 let file_of_string (file:string) : t =
-  file
+  expand file
 
 let get_contents (file:t) : string =
   if Sys.file_exists file then
@@ -26,3 +29,13 @@ let write_string (file:t) (str:string) : unit =
   let stream = open_out file in
   output_string stream str;
   close_out stream
+
+let exists = Sys.file_exists
+let is_directory = Sys.is_directory
+
+let get_files_in_directory dir =
+  let filename = get_path dir in
+  try
+    let files = Array.to_list (Sys.readdir filename) in
+    List.map file_of_string files
+  with Sys_error _ -> []
