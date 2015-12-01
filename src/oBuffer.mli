@@ -7,6 +7,7 @@ val make_from_file : File.t -> int -> int -> t
 (* General getters *)
 val get_text : t -> string
 val get_cursor : t -> pos
+val get_char_at_cursor : t -> char
 val get_mark : t -> mark
 val get_col : t -> int
 val get_row : t -> int

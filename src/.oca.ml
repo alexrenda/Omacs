@@ -50,6 +50,17 @@ let register_callbacks (controller:Controller.t) : Controller.t =
        c, buf
   in
 
+  let get_kill_line_behavior buf =
+    match OBuffer.get_char_at_cursor buf with
+    | '\n' -> wrap_bfun OBuffer.delete_char_at_cursor
+    | _ -> beginning_of_line ||> (wrap_bfun OBuffer.set_mark) ||> end_of_line
+           ||> yank_region
+  in
+  let kill_line c b =
+    let f = get_kill_line_behavior b in
+    f c b
+  in
+
   let buffer_function_map =
     [("backspace", OBuffer.delete_char_at_cursor);
      ("left", OBuffer.move_cursor_left);
@@ -75,8 +86,7 @@ let register_callbacks (controller:Controller.t) : Controller.t =
      ("C-w", yank_region);
      ("M-w", copy_region);
      ("C-y", paste_region);
-     ("C-k", beginning_of_line ||> (wrap_bfun OBuffer.set_mark) ||> end_of_line
-             ||> yank_region)
+     ("C-k", kill_line)
     ]
   in
   let callback_buffer_functions = List.map (fun (a, b) -> a, (wrap_bfun b))
