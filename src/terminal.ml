@@ -18,45 +18,46 @@ let filename =
   with _ -> "*SCRATCH*"
 
 let rec main_loop ui controller buf_ref prefix_key =
-  LTerm_ui.wait ui >>=
-    fun event ->
-    let this_key =
-      match event with
-      | LTerm_event.Key key -> let keystr = Utils.to_string_compact key in
-                               let key = Key.key_of_string keystr in
-                               Some key
-      | _ -> None
-    in
-    let run_keypress = function
-      | Some key ->
-         (match Controller.keypress_and_output controller key !buf_ref with
-         | Some (str, (controller, buffer)) ->
-            buf_ref := buffer;
-            status_str := str;
-            controller
-         | None -> controller)
-      | _ -> controller
-    in
-    let action_key = match this_key, prefix_key with
-      | (None, _) -> None
-      | (Some key, None) -> Some key
-      | (Some this_key, Some (Key.Mod (m, k))) ->
-         Some (Key.Chain (Key.Mod (m, k), this_key))
-      | (Some key, Some _) -> Some key
-    in
-    key_to_print := action_key;
-    let controller = run_keypress action_key in
-    let next_prefix_key =
-      let open Key in
-      match action_key with
-      | Some (Mod (Control, (Char 'x'))) -> action_key
-      | _ -> None
-    in
-    LTerm_ui.draw ui;
-    if !running then
-      main_loop ui controller buf_ref next_prefix_key
-    else
-      return ()
+  LTerm_ui.wait ui
+  >>= fun event ->
+  let this_key =
+    match event with
+    | LTerm_event.Key key -> let keystr = Utils.to_string_compact key in
+                             let key = Key.key_of_string keystr in
+                             Some key
+    | _ -> None
+  in
+  let run_keypress = function
+    | Some key ->
+       (match Controller.keypress_and_output controller key !buf_ref with
+        | Some (str, (controller, buffer)) ->
+           buf_ref := buffer;
+           status_str := str;
+           controller
+        | None -> controller)
+    | _ -> controller
+  in
+  let action_key = match this_key, prefix_key with
+    | (None, _) -> None
+    | (Some key, None) -> this_key
+    | (Some this_key, Some (Key.Mod (m, k))) ->
+       Some (Key.Chain (Key.Mod (m, k), this_key))
+    | (Some key, Some _) -> this_key
+  in
+  key_to_print := action_key;
+  let controller = run_keypress action_key in
+  let next_prefix_key =
+    let open Key in
+    match action_key with
+    | Some (Mod (Control, (Char 'x'))) ->
+       action_key
+    | _ -> None
+  in
+  LTerm_ui.draw ui;
+  if !running then
+    main_loop ui controller buf_ref next_prefix_key
+  else
+    return ()
 
 let draw_line_numbers size ui line_nums top_line =
   let line_nums = List.map string_of_int line_nums in
@@ -95,7 +96,7 @@ let draw_line_numbers size ui line_nums top_line =
     | h::t -> remove_n_from_list (n-1) t
   in
   let linum_text = get_linum_str "" (remove_n_from_list (top_line - 1) line_nums)
-                           0 "" in
+                                 0 "" in
   LTerm_draw.draw_styled linum 0 0 (eval [B_fg LTerm_style.lblack;
                                           S linum_text;
                                           E_fg]);
@@ -104,7 +105,7 @@ let draw_line_numbers size ui line_nums top_line =
 let draw_status size ui buf =
   let status_size = {size with rows = 2} in
   let status_rect = {row1=size.rows - status_size.rows; col1=0; col2 = size.cols;
-                    row2 = size.rows} in
+                     row2 = size.rows} in
   let rest_rect = {row1=0;
                    col1=0;
                    col2 = size.cols;

@@ -42,7 +42,7 @@ let rec fold_between f acc lst start finish =
        fold_between f acc lst next finish
     | None -> failwith "index out of bounds"
 
-let normalize_col buf =
+let correct_col buf : unit =
   let rec normalize_col_helper dist prev =
     match prev with
     | Some elt ->
@@ -60,7 +60,36 @@ let normalize_col buf =
      let last = Doubly_linked.last_elt buf.text in
      buf.col <- normalize_col_helper 1 last
 
-(* Getters *)
+let correct_row_and_col buf : unit =
+  let dest_elt = fst buf.cursor in
+  let rec normalize_row_helper curr_col curr_row curr_elt =
+    match (curr_elt, dest_elt) with
+    | None, None -> curr_col, curr_row
+    | Some elt, Some dest when elt = dest -> curr_col, curr_row
+    | Some elt, _ ->
+       let v, _ = Doubly_linked.Elt.value elt in
+       let next_elt = Doubly_linked.next buf.text elt in
+       if v = '\n' then
+         let next_row = curr_row + 1 in
+         let next_col = 1 in
+         normalize_row_helper next_col next_row next_elt
+       else
+         let next_col = curr_col + 1 in
+         if next_col > buf.width then
+           let next_col = 1 in
+           let next_row = curr_row + 1 in
+           normalize_row_helper next_col next_row next_elt
+         else
+           let next_row = curr_row in
+           normalize_row_helper next_col next_row next_elt
+    | _ -> failwith "impossible case"
+  in
+  let col, row = normalize_row_helper 1 1 (Doubly_linked.first_elt buf.text) in
+  buf.col <- col;
+  buf.row <- row
+
+
+  (* Getters *)
 let get_string (buf:t) : string=
   let concat accum (c, _) = accum^(Char.escaped c) in
   Doubly_linked.fold buf.text ~f:concat ~init:""
@@ -99,7 +128,7 @@ let dec_col buf =
   buf.col <- buf.col - 1;
   if buf.col = 0 then
     begin
-      normalize_col buf;
+      correct_col buf;
       buf.row <- buf.row - 1
     end
 
@@ -149,50 +178,89 @@ let set_width (buf:t) (width:int) =
   buf.width <- width;
   buf
 
-let set_row (buf:t) (pos:pos) =
-  buf.row <- pos;
-  buf
-
 let set_col (buf:t) (col:pos) =
+  let col = max col 0 in
   let starting_row = buf.row in
-  let rec go_to_col iters =
-    if iters > buf.width then
-      buf
-    else
-      let starting_col = buf.col in
-      let move, rev =
-        if buf.col < col then
-          move_cursor_right, move_cursor_left
-        else
-          move_cursor_left, move_cursor_right
+  let rec go_to_col () =
+    let starting_col = buf.col in
+    let move, rev =
+      if buf.col < col then
+        move_cursor_right, move_cursor_left
+      else
+        move_cursor_left, move_cursor_right
     in
     move buf |> ignore;
     if buf.row <> starting_row then
       rev buf
     else
-      if buf.col = starting_col then
+      if buf.col = starting_col || buf.col = col then
         buf
       else
-        go_to_col (iters + 1)
+        go_to_col ()
   in
-  go_to_col 0
+  go_to_col ()
 
-let move_cursor_down (buf:t) = failwith "Unimplemented"
+let move_cursor_down (buf:t) =
+  let starting_row = buf.row in
+  let starting_col = buf.col in
+  let rec go_down_row buf =
+    let last_col = buf.col in
+    move_cursor_right buf |> ignore;
+    if buf.col = last_col  || starting_row <> buf.row then
+      ()
+    else
+      go_down_row buf
+  in
+  go_down_row buf;
+  set_col buf starting_col
+
 let move_cursor_up (buf:t) =
-  if buf.row = 0 then
-    buf
-  else
-    let starting_row = buf.row in
-    let starting_col = buf.col in
-    let rec go_up_row () =
-      if starting_row = buf.row then
-        (move_cursor_left buf |> ignore;
-         go_up_row ())
-      else ()
-    in
-    go_up_row ();
-    set_col buf starting_col
+  let starting_row = buf.row in
+  let starting_col = buf.col in
+  let rec go_up_row buf =
+    let last_col = buf.col in
+    move_cursor_left buf |> ignore;
+    if buf.col = last_col  || starting_row <> buf.row then
+      ()
+    else
+      go_up_row buf
+  in
+  go_up_row buf;
+  set_col buf starting_col
 
+let set_row (buf:t) (row:pos) =
+  let row = max row 0 in
+  let starting_col = buf.col in
+  let rec go_to_row () =
+    let starting_row = buf.row in
+    let move =
+      if buf.row < row then
+        move_cursor_down
+      else
+        move_cursor_up
+    in
+    move buf |> ignore;
+    if buf.row = starting_row || buf.row = row then
+      ()
+    else
+      go_to_row ()
+  in
+  go_to_row ();
+  set_col buf starting_col
+
+let move_cursor_to_end (buf:t) =
+  buf.cursor <- (None, Doubly_linked.length buf.text);
+  correct_row_and_col buf;
+  let top_line = buf.row - buf.height in
+  buf.top_line <- max top_line 0;
+  buf
+
+let move_cursor_to_beginning (buf:t) =
+  buf.cursor <- (Doubly_linked.first_elt buf.text, 0);
+  buf.col <- 1;
+  buf.row <- 1;
+  buf.top_line <- 0;
+  buf
 
 let set_top_line (buf:t) (line:int) =
   buf.top_line <- line;
@@ -251,7 +319,8 @@ let make_from_file (file:File.t) (width:int) (height:int) : t =
      col=1; row=1; file=file}
   in
   let string_to_insert = File.get_contents file in
-  insert_text_at_cursor buf string_to_insert
+  let buf = insert_text_at_cursor buf string_to_insert in
+  move_cursor_to_beginning buf
 
 let stylized_text_of_buffer (buf:t) =
   let stylized_text = Style.stylized_text_of_char_ll buf.text in
@@ -278,6 +347,3 @@ let yank_text_between_mark_and_cursor ?kill:(kill=true) (buf:t) =
       fold_between build_yank "" buf.text c_elt m_elt
   in
   result, unset_mark buf
-
-let move_cursor_to_end (buf:t) = failwith "Unimplemented"
-let move_cursor_to_beginning (buf:t) = failwith "Unimplemented"
