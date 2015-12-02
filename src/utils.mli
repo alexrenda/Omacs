@@ -8,6 +8,8 @@ module type Monad = sig
   val return : 'a -> 'a t
   val bind : 'a t -> ('a -> 'b t) -> 'b t
   val (>>=) : 'a t -> ('a -> 'b t) -> 'b t
+  val map : 'a t -> ('a -> 'b) -> 'b t
+  val (>>|) : 'a t -> ('a -> 'b) -> 'b t
   end
 
 module Option : (Monad with type 'a t = 'a option)

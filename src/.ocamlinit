@@ -20,6 +20,7 @@ let _ =
 #load "utils.d.cmo";;
 #load "file.d.cmo";;
 #load "key.d.cmo";;
+#load "style.d.cmo";;
 #load "interpreter.d.cmo";;
 #load "oBuffer.d.cmo";;
 #load "controller.d.cmo";;

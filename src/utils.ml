@@ -1,8 +1,12 @@
+let (>>) f g x = g (f x)
+
 module type Monad = sig
   type 'a t
   val return : 'a -> 'a t
   val bind : 'a t -> ('a -> 'b t) -> 'b t
   val (>>=) : 'a t -> ('a -> 'b t) -> 'b t
+  val map : 'a t -> ('a -> 'b) -> 'b t
+  val (>>|) : 'a t -> ('a -> 'b) -> 'b t
   end
 
 let capture_output (f:'a->'b) (a:'a) : string*'b =
@@ -34,6 +38,9 @@ module Option = struct
     | Some a -> f a
     | None -> None
   let (>>=) = bind
+
+  let map a f = bind a (f >> return)
+  let (>>|) = map
 end
 
 (* forked and improved from

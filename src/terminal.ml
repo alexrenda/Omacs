@@ -59,7 +59,7 @@ let rec main_loop ui controller buf_ref prefix_key =
       return ()
 
 let draw_line_numbers size ui buf =
-  let starting_line_number = OBuffer.get_view_row !buf in
+  let starting_line_number = OBuffer.get_top_row !buf in
   let last_line_number = starting_line_number + size.rows in
   let digits = 1 + int_of_float(log10(float_of_int last_line_number)) in
   let linum_size = {size with cols = digits + 1} in
@@ -126,8 +126,10 @@ let draw ui matrix buf =
 
   buf := OBuffer.set_width !buf (ui_rect.col2 - linum_size);
 
-  let row = OBuffer.get_view_row !buf in
-  let buffer_text = OBuffer.text_of_buffer !buf in
+  let row = OBuffer.get_top_row !buf in
+  let buffer_text = OBuffer.stylized_text_of_buffer !buf in
+  let buffer_text = (B_fg LTerm_style.default)::buffer_text in
+
   LTerm_draw.draw_styled text (-row) 0 (eval buffer_text);
   LTerm_ui.set_cursor_position ui {row=OBuffer.get_row !buf - row;
                                    col=linum_size + OBuffer.get_col !buf}
