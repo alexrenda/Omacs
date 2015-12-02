@@ -40,10 +40,10 @@ let get_text (buf:t) =
   let concat accum c = accum^(Char.escaped c) in
   Doubly_linked.fold buf.text ~f:concat ~init:""
 
- let get_char_at_cursor (buf:t) = failwith "Unimplemented"
-(*    match fst buf.cursor with
-    | Some c ->
-    | None *)
+ let get_char_at_cursor (buf:t) =
+    match fst buf.cursor with
+    | Some c -> Doubly_linked.Elt.value c
+    | None -> '\000'
 
 let get_cursor (buf:t) = snd buf.cursor
 
