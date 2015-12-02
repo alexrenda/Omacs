@@ -90,12 +90,10 @@ let to_string_compact (key:LTerm_key.t) =
          let code = UChar.code ch in
          if code <= 255 then
            match code with
-             | ch when ch > 20 && ch < 127 ->
-                 Buffer.add_char buffer (char_of_int ch)
-             | 20 ->
-                 Buffer.add_string buffer "space"
-             | _ ->
-                 Printf.bprintf buffer "U+%02x" code
+           | 32 -> Buffer.add_string buffer "space"
+           | ch when ch > 20 && ch < 127 ->
+              Buffer.add_char buffer (char_of_int ch)
+           | _ -> Printf.bprintf buffer "U+%02x" code
          else if code <= 0xffff then
            Printf.bprintf buffer "U+%04x" code
          else
