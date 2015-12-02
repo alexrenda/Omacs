@@ -91,7 +91,7 @@ let correct_row_and_col buf : unit =
 
   (* Getters *)
 let get_string (buf:t) : string=
-  let concat accum (c, _) = accum^(Char.escaped c) in
+  let concat accum (c, _) = accum^(String.make 1 c) in
   Doubly_linked.fold buf.text ~f:concat ~init:""
 
 let get_char_at_cursor (buf:t) : char option =
@@ -304,6 +304,14 @@ let delete_char_at_cursor (buf:t) =
      Doubly_linked.remove buf.text c;
      buf
   | None -> buf
+
+let delete_char_before_cursor (buf:t) =
+  if snd buf.cursor <> 0 then
+    let buf = move_cursor_left buf in
+    delete_char_at_cursor buf
+  else
+    buf
+
 
 (* File operations *)
 let write (buf:t) =

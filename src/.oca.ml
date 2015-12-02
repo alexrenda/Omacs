@@ -74,7 +74,8 @@ let register_callbacks (controller:Controller.t) : Controller.t =
   in
 
   let function_map =
-    [("backspace", OBuffer.delete_char_at_cursor);
+    [("backspace", OBuffer.delete_char_before_cursor);
+     ("delete", OBuffer.delete_char_at_cursor);
      ("left", OBuffer.move_cursor_left);
      ("C-f", OBuffer.move_cursor_left);
      ("right", OBuffer.move_cursor_right);
