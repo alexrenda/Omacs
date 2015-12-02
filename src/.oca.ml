@@ -4,7 +4,6 @@ let register_callbacks (controller:Controller.t) : Controller.t =
   let open Utils in
   let kill_buffer = ref None in
 
-
   let compose f1 f2 c b =
     let c, b = f1 c b in
     f2 c b
@@ -60,6 +59,19 @@ let register_callbacks (controller:Controller.t) : Controller.t =
     let f = get_kill_line_behavior b in
     f c b
   in
+  let scroll_lines lines b =
+    let start_view_row = OBuffer.get_view_row b in
+    let b = OBuffer.set_view_row b (start_view_row + lines) in
+    b
+  in
+  let scroll_half_page down c b =
+    let height = OBuffer.get_height b in
+    let scroll_dist = if down then height / 2 else -height / 2 in
+    let b = scroll_lines scroll_dist b in
+    c, b
+  in
+  let scroll_half_page_down = scroll_half_page true in
+  let scroll_half_page_up = scroll_half_page false in
 
   let buffer_function_map =
     [("backspace", OBuffer.delete_char_at_cursor);
@@ -86,7 +98,9 @@ let register_callbacks (controller:Controller.t) : Controller.t =
      ("C-w", yank_region);
      ("M-w", copy_region);
      ("C-y", paste_region);
-     ("C-k", kill_line)
+     ("C-k", kill_line);
+     ("C-v", scroll_half_page_down);
+     ("M-v", scroll_half_page_up);
     ]
   in
   let callback_buffer_functions = List.map (fun (a, b) -> a, (wrap_bfun b))

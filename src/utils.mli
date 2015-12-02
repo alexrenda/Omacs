@@ -2,8 +2,6 @@ val capture_output :  ('a->'b) -> 'a -> string*'b
 val capture_output_option : ('a->'b option) -> 'a -> (string*'b) option
 val to_string_compact : LTerm_key.t -> string
 val string_ends_with : string -> string -> bool
-(* see terminal.mli *)
-val do_nothing : unit -> unit
 
 module type Monad = sig
   type 'a t

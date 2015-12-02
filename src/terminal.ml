@@ -127,10 +127,8 @@ let draw ui matrix buf =
   buf := OBuffer.set_width !buf (ui_rect.col2 - linum_size);
 
   let row = OBuffer.get_view_row !buf in
-  let text_str = OBuffer.str_of_buffer !buf in
-  LTerm_draw.draw_styled text (-row) 0 (eval [B_fg LTerm_style.default;
-                                              S text_str;
-                                              E_fg]);
+  let buffer_text = OBuffer.text_of_buffer !buf in
+  LTerm_draw.draw_styled text (-row) 0 (eval buffer_text);
   LTerm_ui.set_cursor_position ui {row=OBuffer.get_row !buf - row;
                                    col=linum_size + OBuffer.get_col !buf}
 

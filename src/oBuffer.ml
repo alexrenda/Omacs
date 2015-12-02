@@ -154,7 +154,8 @@ let write (buf:t) =
 let get_file (buf:t) = buf.file
 
 
-let str_of_buffer (buf:t) = failwith "Unimplemented"
+
+let text_of_buffer (buf:t) = failwith "Unimplemented"
 let set_view_row (buf:t) = failwith "Unimplemented"
 let move_cursor_to_end (buf:t) = failwith "Unimplemented"
 let move_cursor_to_beginning (buf:t) = failwith "Unimplemented"
