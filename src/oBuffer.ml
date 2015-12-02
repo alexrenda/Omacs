@@ -263,6 +263,8 @@ let move_cursor_to_beginning (buf:t) =
   buf
 
 let set_top_line (buf:t) (line:int) =
+  let line = max 0 line in
+  let line = min buf.row line in
   buf.top_line <- line;
   buf
 

@@ -145,7 +145,8 @@ let draw ui matrix buf =
   let text, text_rect = draw_line_numbers ui_size ui_ctx line_nums top_line  in
   let linum_size = text_rect.col1 in
 
-  buf := OBuffer.set_width !buf (ui_rect.col2 - linum_size);
+  buf := OBuffer.set_width !buf (text_rect.col2 - text_rect.col1);
+  buf := OBuffer.set_height !buf (text_rect.row2 - text_rect.row1);
 
   let top_line = OBuffer.get_top_line !buf in
   let buffer_text = (B_fg LTerm_style.default)::buffer_text in

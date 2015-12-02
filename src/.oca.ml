@@ -47,10 +47,10 @@ let register_callbacks (controller:Controller.t) : Controller.t =
   let kill_line b = get_kill_line_behavior b b in
 
   let scroll_lines lines b =
-    let start_view_row = OBuffer.get_top_line b in
-    let b = OBuffer.set_top_line b (start_view_row + lines) in
     let start_row = OBuffer.get_row b in
     let b = OBuffer.set_row b (start_row + lines) in
+    let start_view_row = OBuffer.get_top_line b in
+    let b = OBuffer.set_top_line b (start_view_row + lines) in
     b
   in
 
