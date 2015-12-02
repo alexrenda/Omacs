@@ -58,10 +58,15 @@ let rec main_loop ui controller buf_ref prefix_key =
     else
       return ()
 
-let draw_line_numbers size ui buf =
-  let starting_line_number = OBuffer.get_top_row !buf in
-  let last_line_number = starting_line_number + size.rows in
-  let digits = 1 + int_of_float(log10(float_of_int last_line_number)) in
+let draw_line_numbers size ui line_nums top_line =
+  let line_nums = List.map string_of_int line_nums in
+  let last_line = top_line + size.rows in
+  let last_line_number =
+    try
+      List.nth line_nums last_line
+    with _ -> string_of_int (List.length line_nums)
+  in
+  let digits = String.length last_line_number in
   let linum_size = {size with cols = digits + 1} in
   let linum_rect = {row1=0; col1=0; col2 = linum_size.cols;
                     row2 = linum_size.rows} in
@@ -71,15 +76,28 @@ let draw_line_numbers size ui buf =
                    row2 = size.rows} in
   let linum = LTerm_draw.sub ui linum_rect in
   let text = LTerm_draw.sub ui text_rect in
-  let rec get_all_line_numbers st =
-    if st > last_line_number then
-      []
+  let rec get_linum_str last_num lst idx str =
+    if idx = size.rows then
+      str
     else
-      (string_of_int st) :: (get_all_line_numbers (st + 1))
+      match lst with
+      | [] -> str
+      | h::t when h = last_num ->
+         let acc = Printf.sprintf "%s\n" str in
+         get_linum_str h t (idx+1) acc
+      | h::t ->
+         let acc = Printf.sprintf "%s%s\n" str h in
+         get_linum_str h t (idx+1) acc
   in
-  let linum_str = String.concat "\n" (get_all_line_numbers 1) in
+  let rec remove_n_from_list n = function
+    | lst when n <= 0 -> lst
+    | [] -> []
+    | h::t -> remove_n_from_list (n-1) t
+  in
+  let linum_text = get_linum_str "" (remove_n_from_list (top_line - 1) line_nums)
+                           0 "" in
   LTerm_draw.draw_styled linum 0 0 (eval [B_fg LTerm_style.lblack;
-                                          S linum_str;
+                                          S linum_text;
                                           E_fg]);
   text, text_rect
 
@@ -121,27 +139,33 @@ let draw ui matrix buf =
   let ui_size = {full_size with rows = ui_rect.row2-ui_rect.row1} in
   LTerm_draw.clear ui_ctx;
 
-  let text, text_rect = draw_line_numbers ui_size ui_ctx buf in
+  let line_nums, buffer_text = OBuffer.stylized_text_of_buffer !buf in
+  let top_line = OBuffer.get_top_line !buf in
+  let text, text_rect = draw_line_numbers ui_size ui_ctx line_nums top_line  in
   let linum_size = text_rect.col1 in
 
   buf := OBuffer.set_width !buf (ui_rect.col2 - linum_size);
 
-  let row = OBuffer.get_top_row !buf in
-  let buffer_text = OBuffer.stylized_text_of_buffer !buf in
+  let top_line = OBuffer.get_top_line !buf in
   let buffer_text = (B_fg LTerm_style.default)::buffer_text in
 
-  LTerm_draw.draw_styled text (-row) 0 (eval buffer_text);
-  LTerm_ui.set_cursor_position ui {row=OBuffer.get_row !buf - row;
-                                   col=linum_size + OBuffer.get_col !buf}
+  LTerm_draw.draw_styled text (-top_line) 0 (eval buffer_text);
+  LTerm_ui.set_cursor_position ui {row=OBuffer.get_row !buf - top_line - 1;
+                                   col=linum_size + OBuffer.get_col !buf - 1}
 
 let run () =
+  Printf.eprintf "start run\n%!";
   Lazy.force LTerm.stdout
   >>= fun term ->
   let file = File.file_of_string filename in
   let buf = ref (OBuffer.make_from_file file 80 80) in
+  Printf.eprintf "made buffer\n%!";
+  Printf.eprintf "about to make controller\n%!";
   let controller = Controller.create () in
+  Printf.eprintf "made controller\n%!";
   LTerm_ui.create term (fun matrix size -> draw matrix size buf)
   >>= fun ui ->
+  Printf.eprintf "got ui\n%!";
   LTerm_ui.set_cursor_visible ui true;
   Lwt.finalize (fun () -> main_loop ui controller buf None)
                (fun () -> LTerm_ui.quit ui)

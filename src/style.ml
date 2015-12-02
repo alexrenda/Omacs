@@ -29,3 +29,29 @@ let stylized_text_of_char_ll lst : stylized_text =
   in
   let all = Core.Doubly_linked.fold_right lst ~init:[] ~f:build in
   List.concat all
+
+let wrap_lines_acc width (rev_lines_to_print, curr_row, curr_col, rev_stylized_str)
+                   item =
+  match item with
+  | S s -> if s = "\n" then
+             let next_row = curr_row + 1 in
+             let next_col = 1 in
+             let rev_lines_to_print = next_row :: rev_lines_to_print in
+             let rev_stylized_str = item :: rev_stylized_str in
+             (rev_lines_to_print, next_row, next_col, rev_stylized_str)
+           else
+             let next_col = curr_col + 1 in
+             if next_col > width then
+               let next_col = 1 in
+               let rev_lines_to_print = curr_row :: rev_lines_to_print in
+               let rev_stylized_str = S "\n" :: item :: rev_stylized_str in
+               (rev_lines_to_print, curr_row, next_col, rev_stylized_str)
+             else
+               let rev_stylized_str = item :: rev_stylized_str in
+               (rev_lines_to_print, curr_row, next_col, rev_stylized_str)
+  | _ -> (rev_lines_to_print, curr_row, curr_col, item::rev_stylized_str)
+
+let wrap_lines width stylized_text =
+  let rev_lines_to_print, _, _, rev_stylized_str =
+    List.fold_left (wrap_lines_acc width) ([1], 1, 1, []) stylized_text in
+  List.rev rev_lines_to_print, List.rev rev_stylized_str

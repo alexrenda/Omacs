@@ -17,7 +17,7 @@ let register_callbacks (controller:Controller.t) : Controller.t =
 
   let save_func b = Printf.printf "Saved buffer"; OBuffer.write b in
   let close_func b = Terminal.close (); b in
-  let beginning_of_line b = OBuffer.set_col b 0 in
+  let beginning_of_line b = OBuffer.set_col b 1 in
   let end_of_line b = OBuffer.set_col b (OBuffer.get_width b) in
 
   let paste_region b =
@@ -47,8 +47,8 @@ let register_callbacks (controller:Controller.t) : Controller.t =
   let kill_line b = get_kill_line_behavior b b in
 
   let scroll_lines lines b =
-    let start_view_row = OBuffer.get_top_row b in
-    let b = OBuffer.set_top_row b (start_view_row + lines) in
+    let start_view_row = OBuffer.get_top_line b in
+    let b = OBuffer.set_top_line b (start_view_row + lines) in
     b
   in
 
@@ -63,7 +63,7 @@ let register_callbacks (controller:Controller.t) : Controller.t =
   let scroll_half_page_up = scroll_half_page false in
 
   let center_screen b =
-    let start_view_row = OBuffer.get_top_row b in
+    let start_view_row = OBuffer.get_top_line b in
     let cursor_row = OBuffer.get_row b in
     let height = OBuffer.get_height b in
     let desired_row = start_view_row + height / 2 in

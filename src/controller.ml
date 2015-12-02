@@ -17,9 +17,11 @@ let eval_file_and_output (controller:t) (file:File.t) =
   Utils.capture_output (fun () -> eval_file controller file) ()
 
 let create () =
+  Printf.eprintf "creating controller\n%!";
   let self = {keypress_listeners=Hashtbl.create 37} in
   let file = File.file_of_string ".oca.ml" in
-  let controller = eval_file self file in
+  let controller = eval_file ~debug:true self file in
+  Printf.eprintf "evaluated .oca.ml!\n%!";
 
   let ocamldir = File.file_of_string "~/.oca.ml.d" in
   let ocaml_files = File.get_files_in_directory ocamldir in
@@ -32,6 +34,7 @@ let create () =
     | f::t -> let controller = eval_file controller file in
               eval_all controller t
   in
+  Printf.eprintf "about to eval all\n%!";
   eval_all controller ocaml_files
 
 let register_keypress_listener (controller:t) (key:key) (callback:callback) : t =
