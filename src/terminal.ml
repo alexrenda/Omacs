@@ -61,13 +61,15 @@ let rec main_loop ui controller buf_ref prefix_key =
 
 let draw_line_numbers size ui line_nums top_line =
   let line_nums = List.map string_of_int line_nums in
-  let last_line = top_line + size.rows in
-  let last_line_number =
-    try
-      List.nth line_nums last_line
-    with _ -> string_of_int (List.length line_nums)
+  let digits =
+    let last_line = top_line + size.rows in
+    let last_line_number =
+      try
+        List.nth line_nums (last_line - 1)
+      with _ -> string_of_int (List.length line_nums)
+    in
+    String.length last_line_number
   in
-  let digits = String.length last_line_number in
   let linum_size = {size with cols = digits + 1} in
   let linum_rect = {row1=0; col1=0; col2 = linum_size.cols;
                     row2 = linum_size.rows} in
@@ -151,24 +153,21 @@ let draw ui matrix buf =
   let top_line = OBuffer.get_top_line !buf in
   let buffer_text = (B_fg LTerm_style.lwhite)::buffer_text in
 
-  LTerm_draw.draw_styled text (-top_line) 0 (eval buffer_text);
-  LTerm_ui.set_cursor_position ui {row=OBuffer.get_row !buf - top_line - 1;
+  LTerm_draw.draw_styled text (-top_line + 1) 0 (eval buffer_text);
+  LTerm_ui.set_cursor_position ui {row=OBuffer.get_row !buf - top_line;
                                    col=linum_size + OBuffer.get_col !buf - 1}
 
 let run () =
-  Printf.eprintf "start run\n%!";
   Lazy.force LTerm.stdout
   >>= fun term ->
   let file = File.file_of_string filename in
   let buf = ref (OBuffer.make_from_file file 80 80) in
-  Printf.eprintf "made buffer\n%!";
-  Printf.eprintf "about to make controller\n%!";
   let controller = Controller.create () in
-  Printf.eprintf "made controller\n%!";
-  LTerm_ui.create term (fun matrix size -> draw matrix size buf)
+  LTerm_ui.create term (fun matrix size -> draw matrix size buf;
+                                           draw matrix size buf)
   >>= fun ui ->
-  Printf.eprintf "got ui\n%!";
   LTerm_ui.set_cursor_visible ui true;
+  LTerm_ui.draw ui;
   Lwt.finalize (fun () -> main_loop ui controller buf None)
                (fun () -> LTerm_ui.quit ui)
 let main () =

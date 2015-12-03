@@ -241,18 +241,18 @@ let move_cursor_to_end (buf:t) =
   buf.cursor <- (None, Doubly_linked.length buf.text);
   correct_row_and_col buf;
   let top_line = buf.row - buf.height in
-  buf.top_line <- max top_line 0;
+  buf.top_line <- max top_line 1;
   buf
 
 let move_cursor_to_beginning (buf:t) =
   buf.cursor <- (Doubly_linked.first_elt buf.text, 0);
   buf.col <- 1;
   buf.row <- 1;
-  buf.top_line <- 0;
+  buf.top_line <- 1;
   buf
 
 let set_top_line (buf:t) (line:int) =
-  let line = max 0 line in
+  let line = max 1 line in
   let line = min buf.row line in
   buf.top_line <- line;
   buf

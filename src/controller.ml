@@ -32,7 +32,6 @@ let create () =
     | f::t -> let controller = eval_file controller file in
               eval_all controller t
   in
-  Printf.eprintf "about to eval all\n%!";
   eval_all controller ocaml_files
 
 let register_keypress_listener (controller:t) (key:key) (callback:callback) : t =
