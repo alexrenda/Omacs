@@ -24,12 +24,13 @@ let create () =
   let ocamldir = File.file_of_string "~/.oca.ml.d" in
   let ocaml_files = File.get_files_in_directory ocamldir in
   let is_ocaml_file f = Utils.string_ends_with ".oca.ml" (File.get_name f) in
-  let ocaml_files = List.filter (File.is_directory >> (not) &+ is_ocaml_file)
+  let ocaml_files = List.filter ((File.is_directory >> (not))
+                                 &+ is_ocaml_file)
                                 ocaml_files in
 
   let rec eval_all controller = function
     | [] -> controller
-    | f::t -> let controller = eval_file controller file in
+    | f::t -> let controller = eval_file controller f in
               eval_all controller t
   in
   eval_all controller ocaml_files
