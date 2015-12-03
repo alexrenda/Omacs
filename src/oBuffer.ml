@@ -31,16 +31,6 @@ let elt_of_int (lst:char_rep Doubly_linked.t) (count:int) : elt =
   in
   traverse lst (Doubly_linked.first_elt lst) count
 
-let rec fold_between f acc lst start finish =
-  if Doubly_linked.Elt.equal start finish then
-    acc
-  else
-    match Doubly_linked.next lst start with
-    | Some next ->
-       let acc = f acc start in
-       fold_between f acc lst next finish
-    | None -> acc
-
 let correct_col buf : unit =
   let rec normalize_col_helper dist prev =
     match prev with
@@ -281,6 +271,10 @@ let insert_char_at_cursor (buf:t) (chr:char) =
     | Some c -> Doubly_linked.insert_before buf.text c (chr, [])
     | None ->  Doubly_linked.insert_last buf.text (chr, [])
   in
+  if snd buf.mark >= snd buf.cursor then
+    begin
+      buf.mark <- fst buf.mark, (snd buf.mark - 1)
+    end;
   buf.cursor <- Some elt, snd buf.cursor;
   move_cursor_right buf
 
@@ -299,6 +293,14 @@ let insert_text_at_cursor (buf:t) (str:string) : t =
 let delete_char_at_cursor (buf:t) =
   match fst buf.cursor with
   | Some c ->
+     if snd buf.mark > snd buf.cursor then
+       begin
+         buf.mark <- fst buf.mark, (snd buf.mark - 1)
+       end
+     else if snd buf.mark = snd buf.cursor then
+       begin
+         unset_mark buf |> ignore
+       end;
      buf.cursor <- (Doubly_linked.next buf.text c, snd buf.cursor);
      Doubly_linked.remove buf.text c;
      buf
@@ -334,36 +336,74 @@ let stylized_text_of_buffer (buf:t) =
   let _, cursor_pos = buf.cursor in
   let highlight_region =
     match buf.mark with
-    | Some _, mark_pos ->
+    | _, mark_pos when mark_pos >= 0->
        let start = min mark_pos cursor_pos in
        let finish = max mark_pos cursor_pos in
        Printf.printf "%d %d" start finish;
        Some (start, finish)
-    | None, _ -> None
+    | _, _ -> None
   in
   let stylized_text = Style.stylized_text_of_char_ll ~highlight_region buf.text in
   Style.wrap_lines buf.width stylized_text
 
-let yank_text_between_mark_and_cursor ?kill:(kill=true) (buf:t) =
-  fst buf.mark
-  >>= fun m_elt ->
-  fst buf.cursor
-  >>| fun c_elt ->
+let rec yank_text_between_mark_and_cursor ?kill:(kill=true) (buf:t)
+        : (string*t) option =
   let m_pos, c_pos = snd buf.mark, snd buf.cursor in
-  let build_yank acc elt =
-    let c, _ = Doubly_linked.Elt.value elt in
-    if kill then
-      begin
-        Doubly_linked.remove buf.text elt
-      end;
-    acc ^ (String.make 1 c)
+  let mark_before_cursor = m_pos < c_pos in
+  let movement =
+    match kill, mark_before_cursor with
+    | (true, true) -> delete_char_before_cursor
+    | (false, true) -> move_cursor_left
+    | (true, false) -> delete_char_at_cursor
+    | (false, false) -> move_cursor_right
   in
-  let result =
-    if m_pos < c_pos then
-      fold_between build_yank "" buf.text m_elt c_elt
-    else if m_pos > c_pos then
-      fold_between build_yank "" buf.text c_elt m_elt
+  if m_pos = c_pos then
+    Some ("", unset_mark buf)
+  else if m_pos < 0 then
+    None
+  else
+    let mark_before prev =
+      let v, _ = Doubly_linked.Elt.value prev in
+      let s = String.make 1 v in
+      let buf = movement buf in
+      s, buf
+    in
+    let mark_after c_elt =
+      let v, _ = Doubly_linked.Elt.value c_elt in
+      let s = String.make 1 v in
+      let buf = movement buf in
+      s, buf
+    in
+    let s, buf =
+      match (fst buf.mark, fst buf.cursor) with
+      | (None, Some c_elt) ->
+         mark_after c_elt
+      | (Some _, None) ->
+         let prev_elt = match Doubly_linked.last_elt buf.text with
+           | Some e -> e
+           | None -> Printf.eprintf "err1\n";
+                     failwith "exceptional"
+         in
+         mark_before prev_elt
+      | (Some _, Some c_elt) ->
+           if mark_before_cursor then
+             let prev_elt = match Doubly_linked.prev buf.text c_elt with
+               | Some e -> e
+               | None -> Printf.eprintf "err2\n";
+                         failwith "exceptional"
+             in
+             mark_before prev_elt
+           else
+             mark_after c_elt
+      | _ -> Printf.eprintf "err3\n";
+             failwith "exceptional"
+    in
+    let rest, buf =
+      match yank_text_between_mark_and_cursor ~kill buf with
+      | Some (rest, buf) -> rest, buf
+      | None -> "", buf
+    in
+    if mark_before_cursor then
+      Some (rest^s, buf)
     else
-      ""
-  in
-  result, unset_mark buf
+      Some (s^rest, buf)
