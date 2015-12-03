@@ -43,9 +43,12 @@ let eval_file debug file =
       let _ = Unix.dup2 devnull_fd Unix.stderr in
       formatter_devnull
   in
-  ignore (Toploop.use_file formatter (File.get_path file));
+  let success = Toploop.use_file formatter (File.get_path file) in
   Unix.dup2 Unix.stderr devnull_fd;
-  read_object "register_callbacks"
+  if success then
+    read_object "register_callbacks"
+  else
+    failwith "Could not eval file"
 
 let register_api_function = write_object
 
@@ -53,10 +56,6 @@ let _ =
   Toploop.set_paths ();
   !Toploop.toplevel_startup_hook ();
   Toploop.initialize_toplevel_env ();
-  let ocamlinit = File.file_of_string ".ocamlinit" in
-  let file_text = File.get_contents ocamlinit in
-  let lexed = Lexing.from_string file_text in
-  let parsed = !Toploop.parse_toplevel_phrase lexed in
-  ignore(Toploop.execute_phrase false formatter_devnull parsed);
+  let _ = Toploop.use_file formatter_devnull ".omacsinit" in
   Topdirs.dir_directory ".";
   Topdirs.dir_directory "_build"

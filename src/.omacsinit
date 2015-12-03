@@ -1,0 +1,11 @@
+let _ =
+  try Topdirs.dir_directory (Sys.getenv "OCAML_TOPLEVEL_PATH")
+  with Not_found -> ()
+;;
+#use "topfind";;
+#thread;;
+#require "dynlink";;
+#require "core";;
+#require "str";;
+#require "lambda-term";;
+#camlp4o;;
