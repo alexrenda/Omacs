@@ -31,6 +31,12 @@ let elt_of_int (lst:char_rep Doubly_linked.t) (count:int) : elt =
   in
   traverse lst (Doubly_linked.first_elt lst) count
 
+let correct_top_line buf : unit =
+  if buf.row < buf.top_line then
+    buf.top_line <- buf.row
+  else if buf.row >= buf.top_line + buf.height then
+    buf.top_line <- buf.row - buf.height + 1
+
 let correct_col buf : unit =
   let rec normalize_col_helper dist prev =
     match prev with
@@ -77,8 +83,8 @@ let correct_row_and_col buf : unit =
   in
   let col, row = normalize_row_helper 1 1 (Doubly_linked.first_elt buf.text) in
   buf.col <- col;
-  buf.row <- row
-
+  buf.row <- row;
+  correct_top_line buf
 
   (* Getters *)
 let get_string (buf:t) : string=
@@ -120,7 +126,8 @@ let dec_col buf =
   if buf.col = 0 then
     begin
       correct_col buf;
-      buf.row <- buf.row - 1
+      buf.row <- buf.row - 1;
+      correct_top_line buf
     end
 
 let move_cursor_right (buf:t) =
@@ -130,7 +137,8 @@ let move_cursor_right (buf:t) =
     if buf.col > buf.width || was_newline then
       begin
         buf.col <- 1;
-        buf.row <- buf.row + 1
+        buf.row <- buf.row + 1;
+        correct_top_line buf
       end
   in
   let _ =
@@ -242,8 +250,6 @@ let set_row (buf:t) (row:pos) =
 let move_cursor_to_end (buf:t) =
   buf.cursor <- (None, Doubly_linked.length buf.text);
   correct_row_and_col buf;
-  let top_line = buf.row - buf.height in
-  buf.top_line <- max top_line 1;
   buf
 
 let move_cursor_to_beginning (buf:t) =
@@ -341,7 +347,6 @@ let stylized_text_of_buffer (buf:t) =
     | _, mark_pos when mark_pos >= 0->
        let start = min mark_pos cursor_pos in
        let finish = max mark_pos cursor_pos in
-       Printf.printf "%d %d" start finish;
        Some (start, finish)
     | _, _ -> None
   in

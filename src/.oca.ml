@@ -73,13 +73,17 @@ let register_callbacks (controller:Controller.t) : Controller.t =
   let scroll_half_page_down = scroll_half_page true in
   let scroll_half_page_up = scroll_half_page false in
 
-  let center_screen b =
-    let start_view_row = OBuffer.get_top_line b in
+  let c_l_callback b =
     let cursor_row = OBuffer.get_row b in
     let height = OBuffer.get_height b in
-    let desired_row = start_view_row + height / 2 in
-    let delta = desired_row - cursor_row in
-    scroll_lines delta b
+    let desired_row = cursor_row - height / 2 in
+    if OBuffer.get_top_line b = cursor_row then
+      OBuffer.set_top_line b (cursor_row - height + 1)
+    else if OBuffer.get_top_line b = desired_row then
+      OBuffer.set_top_line b cursor_row
+    else
+      OBuffer.set_top_line b desired_row
+
   in
 
   let function_map =
@@ -103,7 +107,7 @@ let register_callbacks (controller:Controller.t) : Controller.t =
      ("next", scroll_half_page_down);
      ("M-v", scroll_half_page_up);
      ("prev", scroll_half_page_up);
-     ("C-l", center_screen);
+     ("C-l", c_l_callback);
      ("C-x C-s", save_func);
      ("C-x C-c", close_func);
      ("C-y", paste_region);
