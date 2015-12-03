@@ -1,3 +1,5 @@
+let (>>|) = Utils.Option.map;;
+
 let register_callbacks (controller:Controller.t) : Controller.t =
   let open Key in
   let open Controller in
@@ -40,7 +42,14 @@ let register_callbacks (controller:Controller.t) : Controller.t =
 
   let get_kill_line_behavior buf =
     match OBuffer.get_char_at_cursor buf with
-    | Some '\n' -> OBuffer.delete_char_at_cursor
+    | Some '\n' -> let buf = OBuffer.delete_char_at_cursor in
+                   let new_kill_buffer =
+                     !kill_buffer
+                     >>| fun b ->
+                     b ^ "\n"
+                   in
+                   kill_buffer := new_kill_buffer;
+                   buf
     | _ -> beginning_of_line ||> OBuffer.set_mark ||> end_of_line ||> yank
   in
 
@@ -77,13 +86,13 @@ let register_callbacks (controller:Controller.t) : Controller.t =
     [("backspace", OBuffer.delete_char_before_cursor);
      ("delete", OBuffer.delete_char_at_cursor);
      ("left", OBuffer.move_cursor_left);
-     ("C-f", OBuffer.move_cursor_left);
+     ("C-b", OBuffer.move_cursor_left);
      ("right", OBuffer.move_cursor_right);
-     ("C-b", OBuffer.move_cursor_right);
+     ("C-f", OBuffer.move_cursor_right);
      ("up", OBuffer.move_cursor_up);
      ("C-p", OBuffer.move_cursor_up);
      ("down", OBuffer.move_cursor_down);
-     ("C-n", OBuffer.move_cursor_up);
+     ("C-n", OBuffer.move_cursor_down);
      ("end", OBuffer.move_cursor_to_end);
      ("M->", OBuffer.move_cursor_to_end);
      ("home", OBuffer.move_cursor_to_beginning);
@@ -91,7 +100,9 @@ let register_callbacks (controller:Controller.t) : Controller.t =
      ("C-space", OBuffer.set_mark);
      ("C-g", OBuffer.unset_mark);
      ("C-v", scroll_half_page_down);
+     ("next", scroll_half_page_down);
      ("M-v", scroll_half_page_up);
+     ("prev", scroll_half_page_up);
      ("C-l", center_screen);
      ("C-x C-s", save_func);
      ("C-x C-c", close_func);

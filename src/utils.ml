@@ -99,9 +99,9 @@ let to_string_compact (key:LTerm_key.t) =
          else
            Printf.bprintf buffer "U+%06x" code
      | Next_page ->
-         Buffer.add_string buffer "next"
+         Buffer.add_string buffer "pageup"
      | Prev_page ->
-         Buffer.add_string buffer "prev"
+         Buffer.add_string buffer "pagedown"
      | code ->
          Buffer.add_string buffer (String.lowercase (string_of_code code)));
   Buffer.contents buffer
