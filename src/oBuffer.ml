@@ -32,15 +32,14 @@ let elt_of_int (lst:char_rep Doubly_linked.t) (count:int) : elt =
   traverse lst (Doubly_linked.first_elt lst) count
 
 let rec fold_between f acc lst start finish =
-  if start = finish then
+  if Doubly_linked.Elt.equal start finish then
     acc
   else
-    let elt = start in
     match Doubly_linked.next lst start with
     | Some next ->
-       let acc = f acc elt in
+       let acc = f acc start in
        fold_between f acc lst next finish
-    | None -> failwith "index out of bounds"
+    | None -> acc
 
 let correct_col buf : unit =
   let rec normalize_col_helper dist prev =
@@ -312,7 +311,6 @@ let delete_char_before_cursor (buf:t) =
   else
     buf
 
-
 (* File operations *)
 let write (buf:t) =
   File.write_string buf.file (get_string buf);
@@ -333,7 +331,17 @@ let make_from_file (file:File.t) (width:int) (height:int) : t =
   move_cursor_to_beginning buf
 
 let stylized_text_of_buffer (buf:t) =
-  let stylized_text = Style.stylized_text_of_char_ll buf.text in
+  let _, cursor_pos = buf.cursor in
+  let highlight_region =
+    match buf.mark with
+    | Some _, mark_pos ->
+       let start = min mark_pos cursor_pos in
+       let finish = max mark_pos cursor_pos in
+       Printf.printf "%d %d" start finish;
+       Some (start, finish)
+    | None, _ -> None
+  in
+  let stylized_text = Style.stylized_text_of_char_ll ~highlight_region buf.text in
   Style.wrap_lines buf.width stylized_text
 
 let yank_text_between_mark_and_cursor ?kill:(kill=true) (buf:t) =
@@ -353,7 +361,9 @@ let yank_text_between_mark_and_cursor ?kill:(kill=true) (buf:t) =
   let result =
     if m_pos < c_pos then
       fold_between build_yank "" buf.text m_elt c_elt
-    else
+    else if m_pos > c_pos then
       fold_between build_yank "" buf.text c_elt m_elt
+    else
+      ""
   in
   result, unset_mark buf

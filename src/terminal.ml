@@ -149,7 +149,7 @@ let draw ui matrix buf =
   buf := OBuffer.set_height !buf (text_rect.row2 - text_rect.row1);
 
   let top_line = OBuffer.get_top_line !buf in
-  let buffer_text = (B_fg LTerm_style.default)::buffer_text in
+  let buffer_text = (B_fg LTerm_style.lwhite)::buffer_text in
 
   LTerm_draw.draw_styled text (-top_line) 0 (eval buffer_text);
   LTerm_ui.set_cursor_position ui {row=OBuffer.get_row !buf - top_line - 1;

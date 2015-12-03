@@ -89,6 +89,7 @@ let register_callbacks (controller:Controller.t) : Controller.t =
      ("home", OBuffer.move_cursor_to_beginning);
      ("M-<", OBuffer.move_cursor_to_beginning);
      ("C-space", OBuffer.set_mark);
+     ("C-g", OBuffer.unset_mark);
      ("C-v", scroll_half_page_down);
      ("M-v", scroll_half_page_up);
      ("C-l", center_screen);
