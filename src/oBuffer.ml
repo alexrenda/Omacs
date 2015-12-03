@@ -42,12 +42,14 @@ let correct_col buf : unit =
          normalize_col_helper (dist + 1) (Doubly_linked.prev buf.text elt)
     | None -> dist
   in
-  match fst buf.cursor with
-  | Some elt ->
-     buf.col <- normalize_col_helper 1 (Doubly_linked.prev buf.text elt)
-  | None ->
-     let last = Doubly_linked.last_elt buf.text in
-     buf.col <- normalize_col_helper 1 last
+  let dist =
+    match fst buf.cursor with
+    | Some elt -> normalize_col_helper 0 (Doubly_linked.prev buf.text elt)
+    | None ->
+       let last = Doubly_linked.last_elt buf.text in
+       normalize_col_helper 0 last
+  in
+  buf.col <- 1 + (dist mod buf.width)
 
 let correct_row_and_col buf : unit =
   let dest_elt = fst buf.cursor in
