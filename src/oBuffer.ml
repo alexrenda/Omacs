@@ -4,7 +4,7 @@ module Doubly_linked = Core.Doubly_linked
 
 type pos = int
 type mark = pos option
-type char_rep = char * Style.t list
+type char_rep = char * Style.t list ref
 type elt = char_rep Doubly_linked.Elt.t option
 type t = {text:char_rep Doubly_linked.t;
           mutable cursor:(elt*pos);
@@ -86,7 +86,7 @@ let correct_row_and_col buf : unit =
   buf.row <- row;
   correct_top_line buf
 
-  (* Getters *)
+(* Getters *)
 let get_string (buf:t) : string=
   let concat accum (c, _) = accum^(String.make 1 c) in
   Doubly_linked.fold buf.text ~f:concat ~init:""
@@ -267,7 +267,7 @@ let set_top_line (buf:t) (line:int) =
 
 let set_text (buf:t) (text:string) =
   Doubly_linked.clear buf.text;
-  String.iter (fun c -> ignore(Doubly_linked.insert_last buf.text (c, []))) text;
+  String.iter (fun c -> ignore(Doubly_linked.insert_last buf.text (c, ref []))) text;
   buf.cursor <- (None, 0);
   buf.mark <- None, -1;
   buf
@@ -276,8 +276,8 @@ let set_text (buf:t) (text:string) =
 let insert_char_at_cursor (buf:t) (chr:char) =
   let elt =
     match fst buf.cursor with
-    | Some c -> Doubly_linked.insert_before buf.text c (chr, [])
-    | None ->  Doubly_linked.insert_last buf.text (chr, [])
+    | Some c -> Doubly_linked.insert_before buf.text c (chr, ref [])
+    | None ->  Doubly_linked.insert_last buf.text (chr, ref [])
   in
   if snd buf.mark >= snd buf.cursor then
     begin
@@ -313,6 +313,23 @@ let delete_char_at_cursor (buf:t) =
      Doubly_linked.remove buf.text c;
      buf
   | None -> buf
+
+let set_text_style (buf:t) start finish style =
+  let rec set_text_style_helper idx = function
+    | Some elt ->
+       if idx > finish then
+         buf
+       else if idx >= start then
+         let _, prev_style = Doubly_linked.Elt.value elt in
+         prev_style := style;
+         let next = Doubly_linked.next buf.text elt in
+         set_text_style_helper (idx + 1) next
+       else
+         let next = Doubly_linked.next buf.text elt in
+         set_text_style_helper (idx + 1) next
+    | None -> buf
+  in
+  set_text_style_helper 0 (Doubly_linked.first_elt buf.text)
 
 let delete_char_before_cursor (buf:t) =
   if snd buf.cursor <> 0 then
@@ -393,15 +410,15 @@ let rec yank_text_between_mark_and_cursor ?kill:(kill=true) (buf:t)
          in
          mark_before prev_elt
       | (Some _, Some c_elt) ->
-           if mark_before_cursor then
-             let prev_elt = match Doubly_linked.prev buf.text c_elt with
-               | Some e -> e
-               | None -> Printf.eprintf "err2\n";
-                         failwith "exceptional"
-             in
-             mark_before prev_elt
-           else
-             mark_after c_elt
+         if mark_before_cursor then
+           let prev_elt = match Doubly_linked.prev buf.text c_elt with
+             | Some e -> e
+             | None -> Printf.eprintf "err2\n";
+                       failwith "exceptional"
+           in
+           mark_before prev_elt
+         else
+           mark_after c_elt
       | _ -> Printf.eprintf "err3\n";
              failwith "exceptional"
     in

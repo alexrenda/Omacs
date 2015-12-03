@@ -36,6 +36,7 @@ val insert_char_at_cursor : t -> char -> t
 val insert_text_at_cursor : t -> string -> t
 val delete_char_before_cursor : t -> t
 val delete_char_at_cursor : t -> t
+val set_text_style : t -> int -> int -> Style.t list -> t
 
 val yank_text_between_mark_and_cursor : ?kill:bool -> t -> (string*t) option
 

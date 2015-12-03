@@ -28,6 +28,7 @@ let stylized_text_of_char_ll ?highlight_region:(highlight_region=None) lst
     else None
   in
   let build (char, styles) (pos, acc) =
+    let styles = !styles in
     let rec build_styles bacc eacc = function
       | [] -> bacc, eacc
       | s::t -> let b, e = get_style_pair s in
