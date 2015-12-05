@@ -51,6 +51,18 @@ more drastic motions, you can always jump to the beginning or end of a file with
 M-< or M->, respectively. Why don't you try those out and then come back!
 
 
+Now that we're reaching the end of the page, you're probably wondering how to
+scroll down. One way is using the tools you already have - if you scroll past
+the end of the pave, the screen will scroll with you. If you don't want to move
+the cursor all the way down, though, you could try C-v to move the screen down a
+half of a page, or M-v to move it back up.
+
+
+Cool! Sometimes when you move around a lot though, it's easy to get lost.
+There's a key to fix that, too! Try pressing C-l, and see what happens.
+Neat! Now try pressing it multiple times in a row! Pretty cool!
+
+
 And hey! If you're getting tired of this tutorial, and need to take a break,
 remember, you can always close this file at any time by using C-x C-c (which
 represents a sequential sequence of keypresses). So yeah! C-x C-s. Memorize it!
