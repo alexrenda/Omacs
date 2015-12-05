@@ -1,5 +1,10 @@
 digraph mdd {
-    Terminal -> Controller -> Buffer -> File;
-    Terminal -> Buffer;
+    Terminal -> Controller -> OBuffer -> File;
+    Terminal -> OBuffer;
+    Terminal -> Key;
     Controller -> Interpreter;
+    Controller -> Key;
+    Controller -> Utils;
+    OBuffer -> Style;
+    OBuffer -> Utils;
 }
