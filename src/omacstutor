@@ -1,0 +1,219 @@
+Hey there! And welcome to Omacs, the best ocaml based text editor around!
+
+If you're unfamiliar with Omacs/Emacs keybindings and navigation, this tutorial
+is a great place to learn the basics, and get a good start. So, let's begin!
+
+
+Keypresses
+
+The first thing that we should go over is the notation for keypresses. In Omacs,
+commands are generally composed of a "modifier key," like Control (C) or Meta (M),
+as well as a character. Because of this, its often convenient to use the notation
+MOD-CHR to represent keypresses. So, for example, if we wanted to press Control v,
+we would write this as C-v. Why don't you go ahead and type C-v right now!
+
+
+
+
+
+
+
+
+
+
+
+
+
+Congrats! You just moved half a page down. Feel like you want to scroll back up?
+You can by hitting M-v (where M is the meta key, usually Alt). This should make
+reading through the tutorial a lot easier and faster!
+
+
+Cursor Navigation
+
+Sometimes, however, you'll need a finer control than half page steps. For these
+purposes, you are going to want to move the cursor around. This can be done
+intuitively using the arrow key, but there are alternative commands that'll
+probably increase your efficiency:
+
+                                     C-p
+                                      |
+                                 C-b -O- C-f
+                                      |
+                                     C-n
+
+Practice moving around this document using the arrow keys.
+
+Isn't this fun?!
+
+Well, now you have a pretty good idea of basic movement around files. For even
+more drastic motions, you can always jump to the beginning or end of a file with
+M-< or M->, respectively. Why don't you try those out and then come back!
+
+
+And hey! If you're getting tired of this tutorial, and need to take a break,
+remember, you can always close this file at any time by using C-x C-c (which
+represents a sequential sequence of keypresses). So yeah! C-x C-s. Memorize it!
+
+
+Basic Editing
+
+Well, the really cool thing about file editors is that you can do more than just
+move around files with the cursor. You can actually ~~edit~~ files. So why don't
+we go over the basic commands to edit files.
+
+Like most editors, its pretty straight forward to add and delete text; to add text,
+just start typing! Its really that easy. Deleting text is pretty simple too-- you
+can use backspace to delete text before the cursor, and the delete key removes the
+character at the cursor. So that's pretty straight forward.
+
+You can also delete the entire line below the cursor if you'd like. Why don't you
+give it a try and get rid of the blatantly false line below. The command is C-k:
+"Emacs is better than Omacs"
+
+But how do you save text? Surely you'd want to save all of your hard work. DONT
+use C-x C-c! That doesn't save anything! To save, you should hit C-x C-s first!
+
+Cool, so now that you've mastered basic editing, its time to do even cooler stuff!
+
+
+Using the Mark
+
+The mark is a really helpful because it allows you to operate on a certain chunk of
+text! Why don't you go ahead and set the mark by hitting C-Space. Now move the
+cursor around. That highlighted portion of text is the marked area that you can
+operate on. You can always unset the mark with C-g.
+
+Ok, so what is the mark useful for? The obvious examples are copy/cut/paste
+operations. If you want to copy a certain chunk of text, set the mark and cursor
+accordingly, and hit M-w, or C-w to cut. The copied text can be pasted anywhere by
+using C-y. Why don't you practice by cutting and pasting the line below:
+
+"Look upon my mark, ye mighty, and despair"
+
+(protip: if you don't want to move the cursor back and forth to the front and end of
+the line to cut it, why don't you take a look at what C-a and C-e do... Pretty handy,
+huh?)
+
+
+Parting Shots
+
+Well, sadly, it seems like our time has come to an end. You've mastered the basics
+of Omacs, and its time for you to get out there and use what you've learned. Since
+Omacs is so mind-blowingly awesome, you can even try taking a look at setting up
+your own callbacks and coming up with useful commands of your own! The possibilities
+pretty much endless.
+
+Happy editing! And remember, C-x C-c to exit!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Yoooooo!
