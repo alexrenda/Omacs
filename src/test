@@ -17,3 +17,4 @@ cs3110 compile test_interp.ml &&
         fi
     done;
 cs3110 compile test_key_of_string.ml && cs3110 run test_key_of_string.ml
+cs3110 compile test_buffer.ml && cs3110 test test_buffer.ml
