@@ -75,7 +75,7 @@ The modules that we implemented are as follows:
 ### Text Buffer
 The primary data that we store is the contents of the
 buffer. It is implemented as a doubly linked list of characters and style information, since we support insertion and deletion at abitrary points inside the
-string, and we naturally keep track of the cursor position, which is easy to do when it is represented as a node within a linked list.
+string, and we naturally keep track of the cursor position, which is easy to do when it is represented as a node within a linked list. Most of the operations on the buffer are completed by some compostion of moving the cursor left or right, and deleting the character it points to.
 
 ###Additional Information
 Alongside the actual text and cursor position stored in the text buffer, the Obuffer also stores additional information about the file, such as the file name, extension and any other relevant metadata (this information is useful in order to provide features such as context highlighting for specific filetypes, etc). We also store information specific to the current editing state, like marks in the file, information about the layout of the terminal.
@@ -90,7 +90,7 @@ The external dependencies we used for Omacs  are:
  * lambda-term - For the terminal display and styling text
  * compiler-libs (not really external, but must be specially included) - For interpretation
  * core (not really external, but must be specially included) - To use the provided doubly linked list implementation
- *str (not really external, but must be specially included) - Needed for string operations
+ * str (not really external, but must be specially included) - Needed for string operations
  
 We also drew inspiration from lambda-term for the representation of keys/keypresses, but we implemented this ourselves. Aside from these external modules, the rest of Omacs was written from stock Ocaml.
 
