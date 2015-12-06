@@ -9,6 +9,22 @@ module type Monad = sig
   val (>>|) : 'a t -> ('a -> 'b) -> 'b t
   end
 
+let get_devnull () =
+  Unix.descr_of_out_channel (open_out "/dev/null")
+
+let ignore_output (f:'a->'b) (a:'a) : 'b =
+  let oldstdout = Unix.dup Unix.stdout in
+  let newstdout = get_devnull () in
+  let oldstderr = Unix.dup Unix.stderr in
+  let newstderr = get_devnull () in
+  Unix.dup2 newstderr Unix.stderr;
+  Unix.dup2 newstdout Unix.stdout;
+  let result = f a in
+  Unix.dup2 oldstderr Unix.stderr;
+  Unix.dup2 oldstdout Unix.stdout;
+  result
+
+
 let capture_output (f:'a->'b) (a:'a) : string*'b =
   let open Unix in
   let read, write = pipe () in

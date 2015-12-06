@@ -36,15 +36,13 @@ let read_object name =
   Obj.obj (Toploop.getvalue name)
 
 let eval_file debug file =
-  let formatter =
+  let use_func =
     if debug then
-      formatter_stdout
+      Toploop.use_file formatter_stdout
     else
-      let _ = Unix.dup2 devnull_fd Unix.stderr in
-      formatter_devnull
+      Utils.ignore_output (Toploop.use_file formatter_devnull)
   in
-  let success = Toploop.use_file formatter (File.get_path file) in
-  Unix.dup2 Unix.stderr devnull_fd;
+  let success = use_func (File.get_path file) in
   if success then
     read_object "register_callbacks"
   else
@@ -56,6 +54,6 @@ let _ =
   Toploop.set_paths ();
   !Toploop.toplevel_startup_hook ();
   Toploop.initialize_toplevel_env ();
-  let _ = Toploop.use_file formatter_devnull ".omacsinit" in
+  let _ = Utils.ignore_output (Toploop.use_file formatter_devnull) ".omacsinit" in
   Topdirs.dir_directory ".";
-  Topdirs.dir_directory "_build"
+  Topdirs.dir_directory "_build";

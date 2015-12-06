@@ -1,3 +1,4 @@
+val ignore_output :  ('a->'b) -> 'a -> 'b
 val capture_output :  ('a->'b) -> 'a -> string*'b
 val capture_output_option : ('a->'b option) -> 'a -> (string*'b) option
 val to_string_compact : LTerm_key.t -> string

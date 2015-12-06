@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 if [ "$#" -ne 1 ]; then
     ARG="*SCRATCH*"
 else
@@ -5,5 +7,4 @@ else
 fi;
 
 cs3110 compile main.ml &&
-    clear &&
     cs3110 run main $ARG
