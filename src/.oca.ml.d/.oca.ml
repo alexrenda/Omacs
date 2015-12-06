@@ -94,7 +94,10 @@ let register_callbacks (controller:Controller.t) : Controller.t =
       OBuffer.set_top_line b cursor_row
     else
       OBuffer.set_top_line b desired_row
+  in
 
+  let minibuffer_func b =
+    ignore(Terminal.minibuffer "Prompt: "); b
   in
 
   let function_map =
@@ -127,6 +130,7 @@ let register_callbacks (controller:Controller.t) : Controller.t =
      ("C-w", yank);
      ("M-w", copy);
      ("C-k", kill_line);
+     ("C-z", minibuffer_func);
     ]
   in
   let all_functions = List.map (fun (a, b) -> a, (wrap_bfun b)) function_map in

@@ -12,6 +12,9 @@ let running = ref true
 let key_to_print = ref None
 let status_str = ref ""
 
+type minibuffer_contents = {prompt: string; mutable input: string; callback: string -> unit}
+let minibuffer_contents : minibuffer_contents option ref = ref None
+
 let filename =
   let len = Array.length Sys.argv in
   try Sys.argv.(len - 1)
@@ -55,9 +58,29 @@ let rec main_loop ui controller buf_ref prefix_key =
   in
   LTerm_ui.draw ui;
   if !running then
-    main_loop ui controller buf_ref next_prefix_key
+    match !minibuffer_contents with
+    | Some m -> minibuffer_loop ui m controller buf_ref
+    | None ->  main_loop ui controller buf_ref next_prefix_key
   else
     return ()
+
+and minibuffer_loop ui m controller buf_ref =
+  LTerm_ui.wait ui
+  >>= fun event ->
+  match event with
+  | LTerm_event.Key key ->
+    begin
+      match LTerm_key.code key with
+      | LTerm_key.Char _ ->
+        begin
+          m.input <- (m.input ^ LTerm_key.to_string key);
+          LTerm_ui.draw ui;
+          minibuffer_loop ui m controller buf_ref
+        end
+      | LTerm_key.Enter -> main_loop ui controller buf_ref None
+      | _ -> minibuffer_loop ui m controller buf_ref
+    end
+  | _ -> minibuffer_loop ui m controller buf_ref
 
 let draw_line_numbers size ui line_nums top_line =
   let line_nums = List.map string_of_int line_nums in
@@ -122,9 +145,12 @@ let draw_status size ui buf =
     | None -> ""
     | Some key -> Key.string_of_key key
   in
+  let prompt, status_str = match !minibuffer_contents with
+    | Some m -> m.prompt, m.input
+    | None -> "Status", !status_str in
   let key_str = Printf.sprintf "  %s" key in
-  let room_for_status = status_size.cols - 8 - (String.length key_str) in
-  let status_str = Printf.sprintf "Status: %-.*s" room_for_status !status_str in
+  let room_for_status = status_size.cols - 2 - (String.length prompt) - (String.length key_str) in
+  let status_str = Printf.sprintf "%s: %-.*s" prompt room_for_status status_str in
   let bottom_line = Printf.sprintf "%s%s" status_str key_str in
   let status_width = status_size.cols in
   let status_str = Printf.sprintf "%-*s\n%-*s"
@@ -157,6 +183,8 @@ let draw ui matrix buf =
   LTerm_ui.set_cursor_position ui {row=OBuffer.get_row !buf - top_line;
                                    col=linum_size + OBuffer.get_col !buf - 1}
 
+let a = 4
+
 let run () =
   Lazy.force LTerm.stdout
   >>= fun term ->
@@ -177,5 +205,33 @@ let main () =
 
 let close () =
   running := false
+
+let minibuffer prompt =
+  (* minibuffer_contents := Some {prompt=prompt; input=""; callback=callback} *)
+
+  let s = read_line () in
+  print_string ("Highlighting \"" ^ s ^ "\".");
+  s
+
+  (* let rec helper acc = *)
+  (*   match input_char stdin with *)
+  (*   | '\n' -> acc *)
+  (*   | _ as chr -> *)
+  (*     print_char chr; *)
+  (*     flush stdout; *)
+  (*     helper (acc ^ (String.make 1 chr)) *)
+  (* in *)
+  (* helper "" *)
+
+  (* LTerm_ui.wait ui *)
+  (* >>= fun event -> *)
+  (* let this_key = *)
+  (*   match event with *)
+  (*   | LTerm_event.Key key -> let keystr = Utils.to_string_compact key in *)
+  (*                            let key = Key.key_of_string keystr in *)
+  (*                            Some key *)
+  (*   | _ -> None *)
+  (* in *)
+  (* return () *)
 
 let do_nothing () = ()
