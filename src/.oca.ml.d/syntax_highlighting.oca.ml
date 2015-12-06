@@ -19,4 +19,3 @@ let register_callbacks (controller:Controller.t) : Controller.t =
   let controller = Controller.register_keypress_listener
                      controller highlight_key callback in
   controller
-;;

@@ -2,14 +2,15 @@ let _ =
   try Topdirs.dir_directory (Sys.getenv "OCAML_TOPLEVEL_PATH")
   with Not_found -> ()
 ;;
-#use "topfind";;
-#thread;;
-#require "dynlink";;
-#require "str";;
-#require "lambda-term";;
-#camlp4o;;
 
-let (>>|) = Utils.Option.map;;
+#use "topfind"
+#thread
+#require "dynlink"
+#require "str"
+#require "lambda-term"
+#camlp4o
+
+let (>>|) = Utils.Option.map
 
 let register_callbacks (controller:Controller.t) : Controller.t =
   let open Key in
@@ -138,4 +139,3 @@ let register_callbacks (controller:Controller.t) : Controller.t =
   let controller = List.fold_left accumulator controller all_functions in
 
   controller
-;;
