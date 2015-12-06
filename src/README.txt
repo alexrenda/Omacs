@@ -1,7 +1,7 @@
 Omacs: Emacs in Ocaml
 
 Using the program:
-In order to build/run Omacs, simply cd into the included src directory, and use the
+In order to build/run Omacs, simple make sure you ar in the src directory, use the
 run script, and provide the filename of the file you want to edit:
 
 $ cd src
