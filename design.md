@@ -94,6 +94,16 @@ The external dependencies we used for Omacs  are:
 
 We also drew inspiration from lambda-term for the representation of keys/keypresses, but we implemented this ourselves. Aside from these external modules, the rest of Omacs was written from stock Ocaml.
 
+## Division of Labor
+
+Since this was a large project, the work was broken up as follows:
+
+ * Alex: Was responsible for the Omacs controller and interpreter. He implemented these modules, as well as the functionality contained in the .oca.ml files, that define the actual behavior of Omacs. He was also responsible for the testing of these modules.
+ * Mustafa: Was responsible for the backing OBuffer structure. He was also in charge of unit testing the OBuffer funtionality and ensuring that it worked properly. He also updated the documentation and provided the omacstutor utility.
+ * Zander: Was responsible for the display terminal, and ensuring that the terminal module was a functional user interface. He also worked on many of the proofs of concept for the project, and wrote utilities like the make/install scripts.
+
+Each member worked about 40 hours.
+
 ##Testing Plan (Before Implementation)
 
 ###Modular Testing
