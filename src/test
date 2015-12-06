@@ -8,7 +8,7 @@ for file in "${sources[@]}"; do
 done;
 
 cs3110 compile test_interp.ml &&
-    for file in tests/interpreter/*.ml; do
+    for file in tests/*.ml; do
         if ! cs3110 run test_interp.ml $file ; then
             echo "$file FAILED!";
             exit 1;
