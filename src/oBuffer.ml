@@ -17,19 +17,9 @@ type t = {text:char_rep Doubly_linked.t;
           file:File.t}
 
 (* Helpful functions *)
+let (>>) f g x = g (f x)
 let (>>=) = Option.bind
 let (>>|) = Option.map
-
-let elt_of_int (lst:char_rep Doubly_linked.t) (count:int) : elt =
-  let rec traverse l elt num =
-    elt
-    >>= fun c ->
-    if num = 0 then
-      Some c
-    else
-      traverse l (Doubly_linked.next l c) (num-1)
-  in
-  traverse lst (Doubly_linked.first_elt lst) count
 
 let correct_top_line buf : unit =
   if buf.row < buf.top_line then
@@ -267,10 +257,9 @@ let set_top_line (buf:t) (line:int) =
 
 let set_text (buf:t) (text:string) =
   Doubly_linked.clear buf.text;
-  String.iter (fun c -> ignore(Doubly_linked.insert_last buf.text (c, ref []))) text;
-  buf.cursor <- (None, 0);
-  buf.mark <- None, -1;
-  buf
+  String.iter (fun c -> ignore(Doubly_linked.insert_last buf.text (c, ref [])))
+              text;
+  (move_cursor_to_beginning >> unset_mark) buf
 
 (* Text operations *)
 let insert_char_at_cursor (buf:t) (chr:char) =
