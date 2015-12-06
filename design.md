@@ -27,7 +27,7 @@ Omacs include:
 * Highly customizable, using OCaml code to replace or supplement
   built-in Omacs functionality. This code is interpreted
   at run time, using Ocaml's built in interpreter (i.e. the Toploop module).
-  
+
 * This code has the option of adding new keyboard shortcuts,
   overriding core functions, and adding hooks onto previously existing
   functions
@@ -70,7 +70,7 @@ The modules that we implemented are as follows:
 ![MDD](mdd.png)
 
 
-##Data 
+##Data
 
 ### Text Buffer
 The primary data that we store is the contents of the
@@ -91,7 +91,7 @@ The external dependencies we used for Omacs  are:
  * compiler-libs (not really external, but must be specially included) - For interpretation
  * core (not really external, but must be specially included) - To use the provided doubly linked list implementation
  * str (not really external, but must be specially included) - Needed for string operations
- 
+
 We also drew inspiration from lambda-term for the representation of keys/keypresses, but we implemented this ourselves. Aside from these external modules, the rest of Omacs was written from stock Ocaml.
 
 ##Testing Plan (Before Implementation)
@@ -105,3 +105,9 @@ For the editor as a whole, the majority of our testing would naturally be real w
 ## Actual Testing (During/After Implementation)
 
 Through development, we were able to follow our initial testing plan reasonably well. While working individual modules, we wrote various unit tests that ensured that the code was functioning properly. By setting up a commit hook that rejected commits that failed to build or pass unit tests, we were able to ensure that the project remained stable and unbroken as we continued to work on it, which was very helpful. As we stated in our plan, we also hoped to have the ability to test the entire system by using Omacs to continue to develop, and we were actually able to achieve this goal towards the end of this project-- in fact, this design document was actually updated in Omacs! To our knowledge, there are currently no bugs in Omacs.
+
+
+##How to extend Omacs
+
+When Omacs is started, it evaluates every file in ~/.oca.ml.d that ends with ".oca.ml" in alphabetic order (it's important that .oca.ml be ran first). Each of the files must declare a value register_callbacks of type Controller.t -> Controller.t. This function is immediately ran when the file is evaluated.
+Inside of each of these register_callbacks, the file may register some keypresses to listen for, and execute callbacks when the keypress is ran. For possible examples, see the ~/.oca.ml.d/.oca.ml
