@@ -1,5 +1,3 @@
-let zabb = 1;;
-
 let register_callbacks (controller:Controller.t) : Controller.t =
   let open Key in
   let highlight_key = key_of_string "C-s" in

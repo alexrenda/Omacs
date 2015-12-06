@@ -15,10 +15,8 @@ run: graphs docs
 clean:
 	rm *.pdf *.p
 
-build:
-	ocamlbuild -use-ocamlfind -pkgs compiler-libs,compiler-libs.toplevel,lambda-term,str,core -tag thread src/main.byte
-	mv main.byte omacs
-
-install: build
-	cp omacs /bin
-	cp src/.oca.ml ~/.oca.ml.d
+release: run
+	rm omacs.zip || true
+	cd src; \
+	zip ../omacs.zip *.ml{,i} README.txt run.sh omacstutor test tests/*.ml .cs3110 .oca.ml.d/*.oca.ml .oca.ml.d/.*oca.ml
+	git log > vclog.txt
