@@ -22,7 +22,7 @@ let rec main_loop ui controller buf_ref prefix_key =
   >>= fun event ->
   let this_key =
     match event with
-    | LTerm_event.Key key -> let keystr = Utils.to_string_compact key in
+    | LTerm_event.Key key -> let keystr = Key.lterm_key_to_string key in
                              let key = Key.key_of_string keystr in
                              Some key
     | _ -> None

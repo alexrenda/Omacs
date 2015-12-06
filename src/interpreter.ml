@@ -54,6 +54,5 @@ let _ =
   Toploop.set_paths ();
   !Toploop.toplevel_startup_hook ();
   Toploop.initialize_toplevel_env ();
-  let _ = Utils.ignore_output (Toploop.use_file formatter_devnull) ".omacsinit" in
   Topdirs.dir_directory ".";
   Topdirs.dir_directory "_build";

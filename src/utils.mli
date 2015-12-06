@@ -1,7 +1,11 @@
+(* ignore_output f a returns b where b is the result of f a
+ * Any output printed to stdout or stderr is ignored *)
 val ignore_output :  ('a->'b) -> 'a -> 'b
+
+(* capture_output f a returns (s, b) where b is the result of f a and *)
+(* s is all output printed to stdout and stderr while running f a *)
 val capture_output :  ('a->'b) -> 'a -> string*'b
 val capture_output_option : ('a->'b option) -> 'a -> (string*'b) option
-val to_string_compact : LTerm_key.t -> string
 val string_ends_with : string -> string -> bool
 
 module type Monad = sig
