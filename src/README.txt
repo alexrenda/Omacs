@@ -18,7 +18,9 @@ the provided omacstutorial:
 $ ./run.sh omacstutor
 
 Extending Omacs:
-If you'd like to take a look at a typical user defined script for Omacs, feel free to
+If you'd like to take a look at a typical user defined behavior for Omacs, feel free to
 look at the .oca.ml file to take a look at how keypresses are handled, or in the
-.oca.ml.d/ directory to see an example of user defined syntax highlighting. If you
-want to provide your own ocaml code, make sure to put it in that directory.
+.oca.ml.d/ directory to see an example of user defined syntax highlighting (the provided
+example literally highlights the word 'syntax', but it serves as a proof of concept/
+example of the kinds of things you can do with Omacs). If you want to provide your own
+ocaml code, make sure to put it in that directory.
