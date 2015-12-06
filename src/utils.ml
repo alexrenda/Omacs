@@ -44,6 +44,8 @@ let capture_output ?stdout:(cap_stdout=true)
   Unix.dup2 newstderr Unix.stderr;
   Unix.dup2 newstdout Unix.stdout;
   let result = f a in
+  Pervasives.flush stdout;
+  Pervasives.flush stderr;
   Unix.dup2 oldstderr Unix.stderr;
   Unix.dup2 oldstdout Unix.stdout;
   let stdout_str = str_of_fd stdout_in in
