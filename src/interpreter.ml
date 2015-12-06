@@ -2,6 +2,7 @@ exception EvalError
 
 let devnull = open_out "/dev/null"
 let formatter_stdout = Format.formatter_of_out_channel stdout
+let formatter_stderr = Format.formatter_of_out_channel stderr
 let formatter_devnull = Format.formatter_of_out_channel devnull
 let devnull_fd = Unix.descr_of_out_channel devnull
 
@@ -36,17 +37,14 @@ let read_object name =
   Obj.obj (Toploop.getvalue name)
 
 let eval_file debug file =
-  let use_func =
-    if debug then
-      Toploop.use_file formatter_stdout
-    else
-      Utils.ignore_output (Toploop.use_file formatter_devnull)
-  in
-  let success = use_func (File.get_path file) in
+  let path = File.get_path file in
+  let output, success =
+    Utils.capture_output ~stdout:false
+                         (Toploop.use_file formatter_stderr) path in
   if success then
     read_object "register_callbacks"
   else
-    failwith "Could not eval file"
+    failwith (Printf.sprintf "Could not eval file %s:\n%s" path output)
 
 let register_api_function = write_object
 

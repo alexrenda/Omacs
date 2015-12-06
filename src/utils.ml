@@ -9,6 +9,16 @@ module type Monad = sig
   val (>>|) : 'a t -> ('a -> 'b) -> 'b t
   end
 
+let str_of_fd fd =
+  match Unix.select [fd] [] [] 0. with
+  | [fd], [], [] ->
+     let in_ch = Unix.in_channel_of_descr fd in
+     let len = 4096 in
+     let bytes = Bytes.create len in
+     let len = input in_ch bytes 0 len in
+     Bytes.sub_string bytes 0 len
+  | _ -> ""
+
 let get_devnull () =
   Unix.descr_of_out_channel (open_out "/dev/null")
 
@@ -24,21 +34,27 @@ let ignore_output (f:'a->'b) (a:'a) : 'b =
   Unix.dup2 oldstdout Unix.stdout;
   result
 
-
-let capture_output (f:'a->'b) (a:'a) : string*'b =
-  let open Unix in
-  let read, write = pipe () in
-  let old_stdout = dup stdout in
-  let _ = dup2 write stdout in
-
+let capture_output ?stdout:(cap_stdout=true)
+                   ?stderr:(cap_stderr=true)
+                   (f: 'a->'b) (a:'a) : string*'b =
+  let oldstdout = Unix.dup Unix.stdout in
+  let stdout_in, newstdout = Unix.pipe () in
+  let oldstderr = Unix.dup Unix.stderr in
+  let stderr_in, newstderr = Unix.pipe () in
+  Unix.dup2 newstderr Unix.stderr;
+  Unix.dup2 newstdout Unix.stdout;
   let result = f a in
-  print_newline ();
-  flush Pervasives.stdout;
-
-  let _ = dup2 old_stdout stdout in
-  let read_channel = in_channel_of_descr read in
-  let output = input_line read_channel in
-  output, result
+  Unix.dup2 oldstderr Unix.stderr;
+  Unix.dup2 oldstdout Unix.stdout;
+  let stdout_str = str_of_fd stdout_in in
+  let stderr_str = str_of_fd stderr_in in
+  let str_result = match (cap_stdout, cap_stderr) with
+    | true, true -> stdout_str ^ stderr_str
+    | true, false -> stdout_str
+    | false, true -> stderr_str
+    | false, false -> ""
+  in
+  str_result, result
 
 let capture_output_option (f: 'a -> 'b option) (a:'a) : (string*'b) option =
   let output, result = capture_output f a in

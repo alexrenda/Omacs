@@ -171,7 +171,9 @@ let run () =
   Lwt.finalize (fun () -> main_loop ui controller buf None)
                (fun () -> LTerm_ui.quit ui)
 let main () =
-  Lwt_main.run (run ())
+  try
+    Lwt_main.run (run ())
+  with Failure f -> Printf.printf "Failed to run terminal:\n%s\n" f
 
 let close () =
   running := false
