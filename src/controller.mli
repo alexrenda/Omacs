@@ -15,7 +15,12 @@ val register_keypress_listener : t -> key -> callback -> t
 
 (* tell the controller about a keypress that should be ran. *)
 val keypress : t -> key -> OBuffer.t -> result option
+
+(* press a key, and get the output of stdout and stderr that were *)
+(* printed during evaluation *)
 val keypress_and_output : t -> key -> OBuffer.t -> (string * result) option
 
 val eval_file : ?debug:bool -> t -> File.t -> t
+(* eval a file, and get the output of stdout and stderr that were *)
+(* printed during evaluation *)
 val eval_file_and_output : t -> File.t -> (string*t)

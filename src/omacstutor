@@ -51,6 +51,11 @@ more drastic motions, you can always jump to the beginning or end of a file with
 M-< or M->, respectively. Why don't you try those out and then come back!
 
 
+Cool! Sometimes when you move around a lot though, it's easy to get lost.
+There's a key to fix that, too! Try pressing C-l, and see what happens.
+Neat! Now try pressing it multiple times in a row! Wow!
+
+
 And hey! If you're getting tired of this tutorial, and need to take a break,
 remember, you can always close this file at any time by using C-x C-c (which
 represents a sequential sequence of keypresses). So yeah! C-x C-s. Memorize it!

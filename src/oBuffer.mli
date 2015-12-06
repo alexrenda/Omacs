@@ -1,3 +1,6 @@
+(* All of the OBuffer setter functions return a t, but there is no *)
+(* guarantee that the OBuffer is immutable. *)
+
 type t
 type pos
 type mark = pos option
@@ -8,10 +11,12 @@ val make_from_file : File.t -> int -> int -> t
 val get_string : t -> string
 val get_char_at_cursor : t -> char option
 val get_mark : t -> mark
+(* row and col are 1-indexed *)
 val get_col : t -> int
 val get_row : t -> int
 val get_width : t -> int
 val get_height : t -> int
+(* the top line of the buffer is the first row that's visible *)
 val get_top_line : t -> int
 
 (* Basic cursor interaction *)
@@ -45,4 +50,8 @@ val write : t -> t
 val get_file : t -> File.t
 
 
+(* stylized_text_of_buffer t returns (r, s) where s is a list of *)
+(* markup items, of which each String element should be on a separate *)
+(* time, and r is the list of line numbers that correspond to each *)
+(* line of s (to handle splitting long lines onto different lines) *)
 val stylized_text_of_buffer : t -> (int list * Style.stylized_text)

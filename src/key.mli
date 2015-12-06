@@ -10,3 +10,5 @@ type key =
 
 val key_of_string : string -> key
 val string_of_key : key -> string
+
+val lterm_key_to_string : LTerm_key.t -> string

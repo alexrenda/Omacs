@@ -350,10 +350,14 @@ let make_from_file (file:File.t) (width:int) (height:int) : t =
   let text = Doubly_linked.create () in
   let start = (None, 0) in
   let buf =
-    {text=text; cursor=start; mark=None, -1; height=width; width=height; top_line=0;
-     col=1; row=1; file=file}
+    {text=text; cursor=start; mark=None, -1; height=width; width=height;
+     top_line=0; col=1; row=1; file=file}
   in
-  let string_to_insert = File.get_contents file in
+  let string_to_insert =
+    try
+      File.get_contents file
+    with File_not_found -> ""
+  in
   let buf = insert_text_at_cursor buf string_to_insert in
   move_cursor_to_beginning buf
 

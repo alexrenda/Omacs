@@ -4,6 +4,8 @@ exception File_not_found
 
 val file_of_string : string -> t
 
+(* get the contents of a file. Raises File_not_found if they cannot be *)
+(* read. *)
 val get_contents : t -> string
 
 (* get the name of the file (e.g. "file.mli") *)

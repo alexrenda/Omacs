@@ -1,4 +1,7 @@
+(* Close the terminal *)
 val close : unit -> unit
+
+(* Run the terminal interface. Returns when close() is called*)
 val main : unit -> unit
 
 (* looks like you need to call a function from a module to link *)
