@@ -26,3 +26,11 @@ setup.log
 
 #charter build
 charter.pdf
+
+# other tmp files
+\#*
+.#*
+*.zip
+vclog.txt
+inline_tests.log
+\*SCRATCH\*
