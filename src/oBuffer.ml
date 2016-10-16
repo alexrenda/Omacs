@@ -1,6 +1,6 @@
 open Utils
 open File
-module Doubly_linked = Core.Doubly_linked
+module Doubly_linked = Core.Std.Doubly_linked
 
 type pos = int
 type mark = pos option

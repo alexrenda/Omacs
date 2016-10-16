@@ -9,5 +9,5 @@ fi;
 rm "$HOME/.oca.ml.d"
 ln -sf "$PWD/.oca.ml.d" "$HOME/.oca.ml.d"
 
-cs3110 compile main.ml &&
-    cs3110 run main $ARG
+ocamlbuild -use-ocamlfind -tag thread -pkgs="compiler-libs compiler-libs.toplevel lambda-term str core" main.byte &&
+    ./main.byte $ARG

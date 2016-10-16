@@ -8,7 +8,7 @@ type stylized_text = LTerm_text.markup
  * been replaced with the proper markup tags. If highlight_region is
  * specified, then that region will be highlighted *)
 val stylized_text_of_char_ll : ?highlight_region:(int*int) option
-                               -> (char*t list ref) Core.Doubly_linked.t
+                               -> (char*t list ref) Core.Std.Doubly_linked.t
                                -> stylized_text
 
 (* wrap_lines width text returns (r, c) where (r, c) are as defined by *)

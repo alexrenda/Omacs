@@ -8,7 +8,6 @@ let _ =
 #require "dynlink"
 #require "str"
 #require "lambda-term"
-#camlp4o
 
 let (>>|) = Utils.Option.map
 

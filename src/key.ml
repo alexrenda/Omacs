@@ -149,5 +149,5 @@ let lterm_key_to_string (key:LTerm_key.t) =
      | Prev_page ->
          Buffer.add_string buffer "pagedown"
      | code ->
-         Buffer.add_string buffer (String.lowercase (string_of_code code)));
+         Buffer.add_string buffer (String.lowercase_ascii (string_of_code code)));
   Buffer.contents buffer

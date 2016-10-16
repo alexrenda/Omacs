@@ -17,7 +17,7 @@ let create_type_for_var name =
 
   let id = !id_counter in
   incr id_counter;
-  let full = {desc = Tarrow ("",
+  let full = {desc = Tarrow (Asttypes.Labelled "",
                              {desc = Tvar (Some "a"); level; id},
                              {desc = Tvar (Some "b"); level; id},
                              Cok);

@@ -49,8 +49,8 @@ let stylized_text_of_char_ll ?highlight_region:(highlight_region=None) lst
     let all_rev = List.rev_append end_styles begin_styles in
     (pos - 1), List.rev all_rev :: acc
   in
-  let len = Core.Doubly_linked.length lst  - 1in
-  let _, all = Core.Doubly_linked.fold_right lst ~init:(len, []) ~f:build in
+  let len = Core.Std.Doubly_linked.length lst  - 1 in
+  let _, all = Core.Std.Doubly_linked.fold_right lst ~init:(len, []) ~f:build in
   List.concat all
 
 let wrap_lines_acc width (rev_lines_to_print, curr_row, curr_col, rev_stylized_str)
